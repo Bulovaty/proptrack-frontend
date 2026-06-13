@@ -16,8 +16,7 @@ export default function Auth() {
   const handleLogin = async () => {
     if (!form.email || !form.password) return setError("Please fill in all fields.");
     setLoading(true);
-    await new Promise(r => setTimeout(r, 600)); // Simulate API call
-    login(form.email, form.password);
+    await login(form.email, form.password);
     setLoading(false);
   };
 
@@ -29,8 +28,7 @@ export default function Auth() {
     if (form.password.length < 6)
       return setError("Password must be at least 6 characters.");
     setLoading(true);
-    await new Promise(r => setTimeout(r, 600));
-    register(form.name, form.email, form.password);
+    await register(form.name, form.email, form.password);
     setLoading(false);
   };
 
@@ -46,18 +44,24 @@ export default function Auth() {
           <div className="auth-logo">P</div>
           <span className="auth-brand-name">PropTrack</span>
         </div>
+
         <div className="auth-hero">
           <h1 className="auth-headline">Property management<br />built for Kenya.</h1>
-          <p className="auth-sub">Track tenants, verify M-Pesa payments, send automated reminders, and list vacant units — all in one place.</p>
+          <p className="auth-sub">
+            Track tenants, verify M-Pesa payments, send automated reminders,
+            and list vacant units — all in one place.
+          </p>
         </div>
+
         <div className="auth-features">
           {[
-            ["🔍", "M-Pesa Verification", "Block forged receipts instantly"],
-            ["📨", "Automated SMS", "Save Ksh 5,000/month on airtime"],
-            ["🏠", "Listings", "Fill vacancies faster"],
+            ["&#128269;", "M-Pesa Verification", "Block forged receipts instantly"],
+            ["&#128232;", "Automated SMS", "Save Ksh 5,000/month on airtime"],
+            ["&#127968;", "Listings", "Fill vacancies faster"],
+            ["&#127962;", "Property Management", "Manage all your properties in one place"],
           ].map(([icon, title, desc]) => (
             <div key={title} className="auth-feature">
-              <span className="auth-feature-icon">{icon}</span>
+              <span className="auth-feature-icon" dangerouslySetInnerHTML={{ __html: icon }} />
               <div>
                 <div className="auth-feature-title">{title}</div>
                 <div className="auth-feature-desc">{desc}</div>
@@ -89,17 +93,12 @@ export default function Auth() {
                 <p>Sign in to your PropTrack account</p>
               </div>
 
-              {/* Demo hint */}
-              <div className="demo-hint">
-                <strong>Demo:</strong> john@jukiwa.co.ke / agent123
-              </div>
-
               <div className="form-group">
                 <label>Email Address</label>
                 <input
                   className="input"
                   type="email"
-                  placeholder="you@example.com"
+                  placeholder="Enter your email"
                   value={form.email}
                   onChange={e => update("email", e.target.value)}
                   onKeyDown={handleKey}
@@ -110,26 +109,28 @@ export default function Auth() {
                 <input
                   className="input"
                   type="password"
-                  placeholder="Your password"
+                  placeholder="Enter your password"
                   value={form.password}
                   onChange={e => update("password", e.target.value)}
                   onKeyDown={handleKey}
                 />
               </div>
 
-              {error && <div className="auth-error">⚠️ {error}</div>}
+              {error && <div className="auth-error">&#9888;&#65039; {error}</div>}
 
               <button
                 className="btn btn-primary auth-submit"
                 onClick={handleLogin}
                 disabled={loading}
               >
-                {loading ? "Signing in..." : "Sign In →"}
+                {loading ? "Signing in..." : "Sign In"}
               </button>
 
               <div className="auth-switch">
                 Don't have an account?{" "}
-                <button onClick={() => { setTab("register"); setError(""); }}>Create one free</button>
+                <button onClick={() => { setTab("register"); setError(""); }}>
+                  Create one free
+                </button>
               </div>
             </div>
           ) : (
@@ -143,7 +144,7 @@ export default function Auth() {
                 <label>Full Name / Agency Name</label>
                 <input
                   className="input"
-                  placeholder="e.g. Jukiwa Property Agents"
+                  placeholder="Enter your name or agency name"
                   value={form.name}
                   onChange={e => update("name", e.target.value)}
                   onKeyDown={handleKey}
@@ -154,7 +155,7 @@ export default function Auth() {
                 <input
                   className="input"
                   type="email"
-                  placeholder="you@example.com"
+                  placeholder="Enter your email"
                   value={form.email}
                   onChange={e => update("email", e.target.value)}
                   onKeyDown={handleKey}
@@ -165,7 +166,7 @@ export default function Auth() {
                 <input
                   className="input"
                   type="password"
-                  placeholder="Min. 6 characters"
+                  placeholder="Minimum 6 characters"
                   value={form.password}
                   onChange={e => update("password", e.target.value)}
                   onKeyDown={handleKey}
@@ -183,14 +184,14 @@ export default function Auth() {
                 />
               </div>
 
-              {error && <div className="auth-error">⚠️ {error}</div>}
+              {error && <div className="auth-error">&#9888;&#65039; {error}</div>}
 
               <button
                 className="btn btn-primary auth-submit"
                 onClick={handleRegister}
                 disabled={loading}
               >
-                {loading ? "Creating account..." : "Create Account →"}
+                {loading ? "Creating account..." : "Create Account"}
               </button>
 
               <div className="auth-switch">
@@ -199,7 +200,8 @@ export default function Auth() {
               </div>
 
               <div className="auth-terms">
-                By creating an account you agree to our Terms of Service. Free Starter plan — no credit card required.
+                By creating an account you agree to our Terms of Service.
+                Free Starter plan — no credit card required.
               </div>
             </div>
           )}
