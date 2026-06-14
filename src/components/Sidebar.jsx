@@ -1,12 +1,14 @@
-import "./Sidebar.css";
+﻿import "./Sidebar.css";
 
 const NAV = [
-  { id: "dashboard", icon: "⊞", label: "Dashboard" },
-  { id: "properties", icon: "🏢", label: "Properties" },
-  { id: "tenants", icon: "👥", label: "Tenants" },
-  { id: "payments", icon: "💳", label: "Payments" },
-  { id: "listings", icon: "🏠", label: "Listings" },
-  { id: "reminders", icon: "🔔", label: "Reminders" },
+  { id: "dashboard", icon: "âŠž", label: "Dashboard" },
+  { id: "search", icon: "ðŸ”", label: "Search" },
+  { id: "properties", icon: "ðŸ¢", label: "Properties" },
+  { id: "tenants", icon: "ðŸ‘¥", label: "Tenants" },
+  { id: "payments", icon: "ðŸ’³", label: "Payments" },
+  { id: "listings", icon: "ðŸ ", label: "Listings" },
+  { id: "reminders", icon: "ðŸ””", label: "Reminders" },
+  { id: "settings", icon: "âš™ï¸", label: "Settings" },
 ];
 
 export default function Sidebar({ activePage, setActivePage, agent, logout }) {
@@ -28,7 +30,8 @@ export default function Sidebar({ activePage, setActivePage, agent, logout }) {
         <div className="sidebar-section-label">Main Menu</div>
         {NAV.map((item, i) => (
           <div key={item.id}>
-            {i === 3 && <div className="nav-divider" />}
+            {i === 4 && <div className="nav-divider" />}
+            {i === 7 && <div className="nav-divider" />}
             <button
               className={`nav-item ${activePage === item.id ? "active" : ""}`}
               onClick={() => setActivePage(item.id)}
@@ -48,9 +51,10 @@ export default function Sidebar({ activePage, setActivePage, agent, logout }) {
             <div className="agent-name">{agent?.name}</div>
             <div className="agent-plan">{agent?.plan} Plan</div>
           </div>
-          <button className="logout-btn" onClick={logout} title="Sign out">⏏</button>
+          <button className="logout-btn" onClick={logout} title="Sign out">â</button>
         </div>
       </div>
     </aside>
   );
 }
+

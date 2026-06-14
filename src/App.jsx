@@ -1,5 +1,6 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { AuthProvider, useAuth } from "./context/AuthContext";
+import { ThemeProvider } from "./context/ThemeContext";
 import Sidebar from "./components/Sidebar";
 import Dashboard from "./pages/Dashboard";
 import Properties from "./pages/Properties";
@@ -7,6 +8,8 @@ import Tenants from "./pages/Tenants";
 import Payments from "./pages/Payments";
 import Listings from "./pages/Listings";
 import Reminders from "./pages/Reminders";
+import Search from "./pages/Search";
+import Settings from "./pages/Settings";
 import Auth from "./pages/Auth";
 import "./App.css";
 
@@ -24,6 +27,8 @@ function AppContent() {
       case "payments":    return <Payments />;
       case "listings":    return <Listings />;
       case "reminders":   return <Reminders />;
+      case "search":      return <Search />;
+      case "settings":    return <Settings />;
       default:            return <Dashboard />;
     }
   };
@@ -38,8 +43,11 @@ function AppContent() {
 
 export default function App() {
   return (
-    <AuthProvider>
-      <AppContent />
-    </AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <AppContent />
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
+
