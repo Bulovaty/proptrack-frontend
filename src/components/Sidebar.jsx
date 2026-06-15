@@ -1,14 +1,14 @@
 ﻿import "./Sidebar.css";
 
 const NAV = [
-  { id: "dashboard", icon: "âŠž", label: "Dashboard" },
-  { id: "search", icon: "ðŸ”", label: "Search" },
-  { id: "properties", icon: "ðŸ¢", label: "Properties" },
-  { id: "tenants", icon: "ðŸ‘¥", label: "Tenants" },
-  { id: "payments", icon: "ðŸ’³", label: "Payments" },
-  { id: "listings", icon: "ðŸ ", label: "Listings" },
-  { id: "reminders", icon: "ðŸ””", label: "Reminders" },
-  { id: "settings", icon: "âš™ï¸", label: "Settings" },
+  { id: "dashboard", icon: "\u2295", label: "Dashboard" },
+  { id: "search", icon: "\u{1F50D}", label: "Search" },
+  { id: "properties", icon: "\u{1F3E2}", label: "Properties" },
+  { id: "tenants", icon: "\u{1F465}", label: "Tenants" },
+  { id: "payments", icon: "\u{1F4B3}", label: "Payments" },
+  { id: "listings", icon: "\u{1F3E0}", label: "Listings" },
+  { id: "reminders", icon: "\u{1F514}", label: "Reminders" },
+  { id: "settings", icon: "\u2699\uFE0F", label: "Settings" },
 ];
 
 export default function Sidebar({ activePage, setActivePage, agent, logout }) {
@@ -51,10 +51,9 @@ export default function Sidebar({ activePage, setActivePage, agent, logout }) {
             <div className="agent-name">{agent?.name}</div>
             <div className="agent-plan">{agent?.plan} Plan</div>
           </div>
-          <button className="logout-btn" onClick={logout} title="Sign out">â</button>
+          <button className="logout-btn" onClick={logout} title="Sign out">{"\u23CF"}</button>
         </div>
       </div>
     </aside>
   );
 }
-

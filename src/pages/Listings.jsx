@@ -144,7 +144,7 @@ export default function Listings() {
               display: "flex", alignItems: "center", justifyContent: "center",
               fontSize: 40, position: "relative"
             }}>
-              {!l.image_url && "&#127968;".replace("&#127968;", "ðŸ ")}
+              {!l.image_url && <span style={{ fontSize: 40 }}>&#127968;</span>}
               <div style={{ position: "absolute", top: 12, right: 12 }}>
                 <span className={`badge badge-${l.status === "available" ? "success" : "neutral"}`}>
                   {l.status === "available" ? "Available" : "Taken"}
@@ -157,13 +157,13 @@ export default function Listings() {
                 {l.title}
               </div>
               <div style={{ color: "var(--text-secondary)", fontSize: 13, marginBottom: 12 }}>
-                ðŸ“ {l.location}
+                &#128205; {l.location}
               </div>
 
               <div style={{ display: "flex", gap: 16, marginBottom: 12 }}>
-                <span style={{ fontSize: 12, color: "var(--text-secondary)" }}>ðŸ› {l.beds} Bed</span>
-                <span style={{ fontSize: 12, color: "var(--text-secondary)" }}>ðŸš¿ {l.baths} Bath</span>
-                <span style={{ fontSize: 12, color: "var(--text-secondary)" }}>ðŸ— {l.type}</span>
+                <span style={{ fontSize: 12, color: "var(--text-secondary)" }}>&#128719; {l.beds} Bed</span>
+                <span style={{ fontSize: 12, color: "var(--text-secondary)" }}>&#128703; {l.baths} Bath</span>
+                <span style={{ fontSize: 12, color: "var(--text-secondary)" }}>&#127959; {l.type}</span>
               </div>
 
               <div style={{ fontSize: 22, fontWeight: 800, color: "var(--accent)", fontFamily: "var(--font-display)", marginBottom: 8 }}>
@@ -178,7 +178,7 @@ export default function Listings() {
               <div style={{ display: "flex", gap: 8 }}>
                 <button className="btn btn-ghost" style={{ flex: 1, fontSize: 12, justifyContent: "center" }}
                   onClick={() => copyLink(l.id)}>
-                  {copied === l.id ? "âœ“ Copied!" : "ðŸ”— Share Link"}
+                  {copied === l.id ? "✓ Copied!" : "🔗 Share Link"}
                 </button>
                 <button className="btn btn-ghost" style={{ flex: 1, fontSize: 12, justifyContent: "center" }}
                   onClick={() => toggleStatus(l)}>
@@ -301,4 +301,3 @@ export default function Listings() {
     </div>
   );
 }
-

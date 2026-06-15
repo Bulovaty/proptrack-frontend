@@ -17,6 +17,8 @@ const apiFetch = async (endpoint, options = {}) => {
   return data;
 };
 
+const DASH = "\u2014";
+
 export default function Search() {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState(null);
@@ -105,7 +107,7 @@ export default function Search() {
                     {results.tenants.map(t => (
                       <tr key={t.id}>
                         <td style={{ fontWeight: 600 }}>{t.name}</td>
-                        <td style={{ color: "var(--text-secondary)" }}>{t.property_name || "â€”"}</td>
+                        <td style={{ color: "var(--text-secondary)" }}>{t.property_name || DASH}</td>
                         <td><span style={{ fontFamily: "monospace", color: "var(--accent)", fontWeight: 700 }}>{t.unit_number}</span></td>
                         <td style={{ color: "var(--text-secondary)" }}>{t.phone}</td>
                         <td style={{ fontWeight: 600 }}>Ksh {Number(t.rent_amount || 0).toLocaleString()}</td>
@@ -146,8 +148,8 @@ export default function Search() {
                   <tbody>
                     {results.payments.map(p => (
                       <tr key={p.id}>
-                        <td style={{ fontWeight: 600 }}>{p.tenant || "â€”"}</td>
-                        <td><span style={{ fontFamily: "monospace", color: "var(--accent)", fontWeight: 700 }}>{p.unit || "â€”"}</span></td>
+                        <td style={{ fontWeight: 600 }}>{p.tenant || DASH}</td>
+                        <td><span style={{ fontFamily: "monospace", color: "var(--accent)", fontWeight: 700 }}>{p.unit || DASH}</span></td>
                         <td>
                           <span style={{
                             fontFamily: "monospace", fontSize: 12,
@@ -188,4 +190,3 @@ export default function Search() {
     </div>
   );
 }
-
