@@ -8,7 +8,6 @@ export function AuthProvider({ children }) {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
 
-  // Check for saved token on app load
   useEffect(() => {
     const token = localStorage.getItem("proptrack_token");
     const savedAgent = localStorage.getItem("proptrack_agent");
@@ -66,10 +65,17 @@ export function AuthProvider({ children }) {
     setAgent(null);
   };
 
+  // Allows other parts of the app (e.g. Settings) to update agent info
+  // after a successful API update, keeping localStorage in sync.
+  const updateAgent = (updatedAgent) => {
+    setAgent(updatedAgent);
+    localStorage.setItem("proptrack_agent", JSON.stringify(updatedAgent));
+  };
+
   if (loading) return null;
 
   return (
-    <AuthContext.Provider value={{ agent, login, register, logout, error, setError }}>
+    <AuthContext.Provider value={{ agent, login, register, logout, error, setError, setAgent: updateAgent }}>
       {children}
     </AuthContext.Provider>
   );
