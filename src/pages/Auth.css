@@ -22,7 +22,7 @@
   position: absolute;
   bottom: -100px; left: -100px;
   width: 400px; height: 400px;
-  background: radial-gradient(circle, rgba(0,229,160,0.06), transparent 70%);
+  background: radial-gradient(circle, color-mix(in srgb, var(--accent) 6%, transparent), transparent 70%);
   pointer-events: none;
 }
 
@@ -43,7 +43,7 @@
   font-family: var(--font-display);
   font-size: 22px;
   font-weight: 900;
-  box-shadow: 0 0 28px rgba(0,229,160,0.4);
+  box-shadow: 0 0 28px color-mix(in srgb, var(--accent) 40%, transparent);
 }
 
 .auth-brand-name {
@@ -86,7 +86,7 @@
   font-size: 16px;
   width: 36px; height: 36px;
   background: var(--accent-dim);
-  border: 1px solid rgba(0,229,160,0.12);
+  border: 1px solid var(--accent-dim);
   border-radius: 9px;
   display: flex;
   align-items: center;
@@ -132,7 +132,7 @@
   position: absolute;
   top: 0; left: 0; right: 0;
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(0,229,160,0.3), transparent);
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--accent) 30%, transparent), transparent);
 }
 
 .auth-tabs {

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-const API = "https://proptrack-backend-production-a3e9.up.railway.app/api";
+const API = "http://localhost:5000/api";
 const getToken = () => localStorage.getItem("proptrack_token");
 
 const apiFetch = async (endpoint, options = {}) => {
@@ -152,7 +152,7 @@ export default function Properties() {
                 <div style={{
                   width: 48, height: 48, borderRadius: 12,
                   background: "linear-gradient(135deg, var(--accent-dim), var(--accent-dim-2))",
-                  border: "1px solid rgba(0,229,160,0.15)",
+                  border: "1px solid var(--border-accent)",
                   display: "flex", alignItems: "center", justifyContent: "center",
                   fontSize: 22, flexShrink: 0
                 }}>&#127962;</div>
@@ -353,7 +353,7 @@ export default function Properties() {
       <style>{`
         @keyframes spin { to { transform: rotate(360deg); } }
         .property-card { transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s; }
-        .property-card:hover { transform: translateY(-3px); box-shadow: 0 16px 48px rgba(0,0,0,0.3); border-color: rgba(0,229,160,0.15); }
+        .property-card:hover { transform: translateY(-3px); box-shadow: 0 16px 48px rgba(0,0,0,0.3); border-color: var(--border-accent); }
       `}</style>
     </div>
   );
