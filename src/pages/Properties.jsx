@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-const API = "http://localhost:5000/api";
+const API = "https://proptrack-backend-production-a3e9.up.railway.app/api";
 const getToken = () => localStorage.getItem("proptrack_token");
 
 const apiFetch = async (endpoint, options = {}) => {

@@ -198,12 +198,7 @@ textarea.input { resize: vertical; }
   font-weight: 700;
   letter-spacing: 0.02em;
 }
-.badge-success { background: var(--accent-dim); color: var(--accent); border: 1px solid rgba(0,0,0,0.06); }
-
-/* Use color-mix for border-color where supported */
-@supports (color: color-mix(in srgb, var(--accent) 15%, transparent)) {
-  .badge-success { border-color: color-mix(in srgb, var(--accent) 15%, transparent); }
-}
+.badge-success { background: var(--accent-dim); color: var(--accent); border: 1px solid rgba(0,229,160,0.15); }
 .badge-danger { background: var(--danger-dim); color: var(--danger); border: 1px solid rgba(255,77,109,0.15); }
 .badge-warning { background: var(--warning-dim); color: var(--warning); border: 1px solid rgba(245,158,11,0.15); }
 .badge-neutral { background: rgba(255,255,255,0.05); color: var(--text-secondary); border: 1px solid var(--border); }
@@ -338,7 +333,7 @@ tbody td { padding: 14px 16px; color: var(--text-primary); }
   opacity: 0.15;
   filter: blur(30px);
 }
-.stat-card.accent { border-color: rgba(34, 197, 94, 0.15); }
+.stat-card.accent { border-color: rgba(0,229,160,0.15); }
 .stat-card.accent .stat-glow { background: var(--accent); }
 .stat-card.accent .stat-value { color: var(--accent); }
 .stat-card.danger { border-color: rgba(255,77,109,0.15); }
@@ -417,4 +412,128 @@ tbody td { padding: 14px 16px; color: var(--text-primary); }
 @media (max-width: 768px) {
   .main-content { margin-left: 0; padding: 16px; }
   .grid-2, .grid-3 { grid-template-columns: 1fr; }
+}
+
+/* ─── Shimmer Animation ─────────────────────────────────────────────────────── */
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ─── Mobile Sidebar ────────────────────────────────────────────────────────── */
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+  z-index: 99;
+  animation: fadeIn 0.2s ease;
+}
+
+.mobile-header {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 56px;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border);
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  z-index: 98;
+}
+
+.mobile-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 900;
+  color: var(--text-primary);
+}
+
+.hamburger {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-secondary);
+  font-size: 22px;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ─── Subscription Banner ───────────────────────────────────────────────────── */
+.sub-banner {
+  background: linear-gradient(135deg, rgba(var(--accent-rgb), 0.1), rgba(var(--accent-2-rgb), 0.1));
+  border: 1px solid rgba(var(--accent-rgb), 0.2);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+/* ─── Mobile Responsive ─────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .main-content {
+    margin-left: 0;
+    padding: 72px 16px 24px;
+  }
+
+  .sidebar {
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  .sidebar-overlay {
+    display: block;
+  }
+
+  .mobile-header {
+    display: flex;
+  }
+
+  .page-title { font-size: 22px; }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .stat-value { font-size: 24px; }
+
+  .grid-2, .grid-3 { grid-template-columns: 1fr; }
+
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .search-bar { width: 100%; }
+
+  .table-wrap { font-size: 12px; }
+
+  tbody td { padding: 10px 12px; }
+
+  .modal { padding: 24px; margin: 0 8px; max-height: 85vh; }
+
+  .sub-banner { flex-direction: column; align-items: flex-start; }
+
+  .dashboard-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 480px) {
+  .stats-grid { grid-template-columns: 1fr; }
 }

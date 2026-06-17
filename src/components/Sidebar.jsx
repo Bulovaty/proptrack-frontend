@@ -8,16 +8,29 @@ const NAV = [
   { id: "payments", icon: "\u{1F4B3}", label: "Payments" },
   { id: "listings", icon: "\u{1F3E0}", label: "Listings" },
   { id: "reminders", icon: "\u{1F514}", label: "Reminders" },
+  { id: "billing", icon: "\u{1F4B0}", label: "Billing" },
   { id: "settings", icon: "\u2699\uFE0F", label: "Settings" },
 ];
 
-export default function Sidebar({ activePage, setActivePage, agent, logout }) {
+export default function Sidebar({ activePage, setActivePage, agent, logout, isOpen, onClose }) {
   const initials = agent?.name
     ? agent.name.split(" ").map(w => w[0]).slice(0, 2).join("").toUpperCase()
     : "AG";
 
   return (
-    <aside className="sidebar">
+    <aside className={`sidebar ${isOpen ? "open" : ""}`}>
+      {/* Close button — mobile only */}
+      <button
+        onClick={onClose}
+        style={{
+          display: "none", position: "absolute", top: 12, right: 12,
+          background: "none", border: "none", color: "var(--text-secondary)",
+          fontSize: 22, cursor: "pointer", zIndex: 1,
+          ...(isOpen ? { display: "flex" } : {})
+        }}
+        className="sidebar-close"
+      >&#10005;</button>
+
       <div className="sidebar-logo">
         <span className="logo-icon">P</span>
         <div>
