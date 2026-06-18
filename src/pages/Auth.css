@@ -231,3 +231,46 @@
   .auth-left { display: none; }
   .auth-right { padding: 24px; }
 }
+
+/* Mode toggle on auth page */
+.mode-toggle {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  width: 36px; height: 36px;
+  cursor: pointer;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+  color: var(--text-secondary);
+}
+.mode-toggle:hover { background: var(--bg-hover); }
+
+/* Agreement checkbox */
+.agreement-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  cursor: pointer;
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.agreement-checkbox {
+  width: 16px; height: 16px;
+  margin-top: 2px;
+  accent-color: var(--accent);
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.agreement-label a {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.agreement-label a:hover { text-decoration: underline; }
