@@ -95,6 +95,22 @@
   gap: 10px;
   justify-content: center;
   margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.onboarding-actions .btn {
+  flex: 1 1 auto;
+  justify-content: center;
+  min-width: 100px;
+}
+
+@media (max-width: 480px) {
+  .onboarding-actions {
+    flex-direction: column;
+  }
+  .onboarding-actions .btn {
+    width: 100%;
+  }
 }
 
 .onboarding-dismiss {
@@ -111,4 +127,50 @@
 @media (max-width: 480px) {
   .onboarding-card { padding: 28px 20px 24px; }
   .onboarding-title { font-size: 18px; }
+}
+
+/* ─── Minimized reopen badge ─────────────────────────────────────────────────── */
+.onboarding-reopen {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-accent);
+  border-radius: 30px;
+  padding: 10px 18px 10px 14px;
+  cursor: pointer;
+  color: var(--accent);
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 700;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3), 0 0 0 1px var(--border-accent);
+  z-index: 400;
+  animation: slideUp 0.25s ease;
+  max-width: calc(100vw - 40px);
+}
+
+.onboarding-reopen span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.onboarding-reopen:hover {
+  border-color: var(--accent);
+  background: var(--accent-dim);
+}
+
+@media (max-width: 480px) {
+  .onboarding-reopen {
+    bottom: 16px;
+    right: 16px;
+    left: 16px;
+    justify-content: center;
+  }
+  .onboarding-reopen span {
+    font-size: 12px;
+  }
 }

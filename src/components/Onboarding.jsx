@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { IconBuilding, IconUsers, IconCreditCard, IconMpesa, IconCheck, IconX, IconArrowRight, IconArrowLeft } from "./Icons";
 import "./Onboarding.css";
 
@@ -33,10 +33,49 @@ const STEPS = [
   },
 ];
 
+// Tutorial is shown as a small floating card (not a full blocking overlay) so
+// the user can actually see and use the page underneath while following along.
 export default function Onboarding({ onNavigate, onDismiss }) {
   const [step, setStep] = useState(0);
+  const [minimized, setMinimized] = useState(false);
   const current = STEPS[step];
+  const isFirst = step === 0;
   const isLast = step === STEPS.length - 1;
+
+  // Navigating just takes the user to the page — it does NOT advance the step.
+  // The user reads the instructions, goes and does the thing, then comes back
+  // and clicks "Next" themselves when ready. This keeps the card's text in
+  // sync with what's actually on screen instead of jumping ahead.
+  const handleGoToPage = () => {
+    onNavigate(current.page);
+    setMinimized(true); // collapse to a small badge so it doesn't block the page
+  };
+
+  const handleNext = () => {
+    if (isLast) {
+      onNavigate(current.page);
+      onDismiss();
+      return;
+    }
+    setStep(s => s + 1);
+    setMinimized(false);
+  };
+
+  const handleBack = () => {
+    setStep(s => Math.max(0, s - 1));
+    setMinimized(false);
+  };
+
+  // Minimized state — small reopen badge in the corner so the user can
+  // keep working on the page without the tutorial blocking their screen.
+  if (minimized) {
+    return (
+      <button className="onboarding-reopen" onClick={() => setMinimized(false)}>
+        <current.icon size={16} />
+        <span>Step {step + 1} of {STEPS.length}: {current.title}</span>
+      </button>
+    );
+  }
 
   return (
     <div className="onboarding-overlay">
@@ -63,19 +102,19 @@ export default function Onboarding({ onNavigate, onDismiss }) {
         <p className="onboarding-desc">{current.desc}</p>
 
         <div className="onboarding-actions">
-          {step > 0 && (
-            <button className="btn btn-ghost" onClick={() => setStep(s => s - 1)}>
+          {!isFirst && (
+            <button className="btn btn-ghost" onClick={handleBack}>
               <IconArrowLeft size={15} /> Back
             </button>
           )}
-          <button
-            className="btn btn-primary"
-            onClick={() => {
-              if (isLast) { onNavigate(current.page); onDismiss(); }
-              else { onNavigate(current.page); setStep(s => s + 1); }
-            }}
-          >
-            {current.action} <IconArrowRight size={15} />
+
+          {/* Two distinct actions: go look at the page, or move to next step */}
+          <button className="btn btn-ghost" onClick={handleGoToPage}>
+            {current.action}
+          </button>
+
+          <button className="btn btn-primary" onClick={handleNext}>
+            {isLast ? "Finish" : "Next"} <IconArrowRight size={15} />
           </button>
         </div>
 
