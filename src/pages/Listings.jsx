@@ -1,4 +1,6 @@
 ﻿import { useState, useEffect, useRef } from "react";
+import { IconHome, IconMapPin, IconUsers, IconBuilding, IconCheck, IconCopy } from "../components/Icons";
+import EmptyState from "../components/EmptyState";
 
 const API = "https://proptrack-backend-production-a3e9.up.railway.app/api";
 const getToken = () => localStorage.getItem("proptrack_token");
@@ -125,11 +127,11 @@ export default function Listings() {
       </div>
 
       {listings.length === 0 && (
-        <div className="empty-state">
-          <div className="empty-state-icon">&#127968;</div>
-          <div className="empty-state-title">No listings yet</div>
-          <p>Post your first vacant unit to start attracting tenants</p>
-        </div>
+        <EmptyState
+          icon={<IconHome size={36} />}
+          title="No listings yet"
+          subtitle="Post your first vacant unit to start attracting tenants"
+        />
       )}
 
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 20 }}>
@@ -144,7 +146,7 @@ export default function Listings() {
               display: "flex", alignItems: "center", justifyContent: "center",
               fontSize: 40, position: "relative"
             }}>
-              {!l.image_url && <span style={{ fontSize: 40 }}>&#127968;</span>}
+              {!l.image_url && <span style={{ color: "var(--accent)", opacity: 0.5 }}><IconHome size={40} /></span>}
               <div style={{ position: "absolute", top: 12, right: 12 }}>
                 <span className={`badge badge-${l.status === "available" ? "success" : "neutral"}`}>
                   {l.status === "available" ? "Available" : "Taken"}
@@ -156,14 +158,14 @@ export default function Listings() {
               <div style={{ fontFamily: "var(--font-display)", fontSize: 16, fontWeight: 800, marginBottom: 4 }}>
                 {l.title}
               </div>
-              <div style={{ color: "var(--text-secondary)", fontSize: 13, marginBottom: 12 }}>
-                &#128205; {l.location}
+              <div style={{ color: "var(--text-secondary)", fontSize: 13, marginBottom: 12, display: "flex", alignItems: "center", gap: 5 }}>
+                <IconMapPin size={13} /> {l.location}
               </div>
 
-              <div style={{ display: "flex", gap: 16, marginBottom: 12 }}>
-                <span style={{ fontSize: 12, color: "var(--text-secondary)" }}>&#128719; {l.beds} Bed</span>
-                <span style={{ fontSize: 12, color: "var(--text-secondary)" }}>&#128703; {l.baths} Bath</span>
-                <span style={{ fontSize: 12, color: "var(--text-secondary)" }}>&#127959; {l.type}</span>
+              <div style={{ display: "flex", gap: 16, marginBottom: 12, flexWrap: "wrap" }}>
+                <span style={{ fontSize: 12, color: "var(--text-secondary)", display: "flex", alignItems: "center", gap: 5 }}><IconHome size={13} /> {l.beds} Bed</span>
+                <span style={{ fontSize: 12, color: "var(--text-secondary)", display: "flex", alignItems: "center", gap: 5 }}><IconUsers size={13} /> {l.baths} Bath</span>
+                <span style={{ fontSize: 12, color: "var(--text-secondary)", display: "flex", alignItems: "center", gap: 5 }}><IconBuilding size={13} /> {l.type}</span>
               </div>
 
               <div style={{ fontSize: 22, fontWeight: 800, color: "var(--accent)", fontFamily: "var(--font-display)", marginBottom: 8 }}>
@@ -175,12 +177,12 @@ export default function Listings() {
                 {l.description}
               </p>
 
-              <div style={{ display: "flex", gap: 8 }}>
-                <button className="btn btn-ghost" style={{ flex: 1, fontSize: 12, justifyContent: "center" }}
+              <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                <button className="btn btn-ghost" style={{ flex: 1, fontSize: 12, justifyContent: "center", gap: 5, minWidth: 120 }}
                   onClick={() => copyLink(l.id)}>
-                  {copied === l.id ? "✓ Copied!" : "🔗 Share Link"}
+                  {copied === l.id ? <><IconCheck size={13} /> Copied!</> : <><IconCopy size={13} /> Share Link</>}
                 </button>
-                <button className="btn btn-ghost" style={{ flex: 1, fontSize: 12, justifyContent: "center" }}
+                <button className="btn btn-ghost" style={{ flex: 1, fontSize: 12, justifyContent: "center", minWidth: 120 }}
                   onClick={() => toggleStatus(l)}>
                   {l.status === "available" ? "Mark Taken" : "Mark Available"}
                 </button>

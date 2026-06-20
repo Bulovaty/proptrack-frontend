@@ -1,6 +1,7 @@
 ﻿import { useState } from "react";
 import { useTheme } from "../context/ThemeContext";
 import { useAuth } from "../context/AuthContext";
+import { IconCheck } from "../components/Icons";
 
 const API = "https://proptrack-backend-production-a3e9.up.railway.app/api";
 const getToken = () => localStorage.getItem("proptrack_token");
@@ -208,9 +209,9 @@ export default function Settings() {
                 {isActive && (
                   <span style={{
                     position: "absolute", top: 10, right: 10,
-                    fontSize: 11, fontWeight: 800, color: `rgb(${t.accent})`
+                    color: `rgb(${t.accent})`, display: "flex"
                   }}>
-                    &#10003;
+                    <IconCheck size={14} />
                   </span>
                 )}
                 <div style={{ display: "flex", gap: 8 }}>

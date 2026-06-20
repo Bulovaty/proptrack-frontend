@@ -1,0 +1,15 @@
+<svg viewBox="0 0 430 140" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      .wordmark { font-family: 'Poppins', 'Segoe UI', Arial, sans-serif; font-size: 40px; font-weight: 600; fill: #080C14; letter-spacing: 0.5px; }
+    </style>
+  </defs>
+
+  <g transform="translate(10,10)">
+    <rect x="0" y="0" width="120" height="120" rx="28" fill="#080C14"/>
+    <path d="M32,84 L58,40 L72,58 L94,26" fill="none" stroke="#F7F4EF" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="94" cy="26" r="5" fill="#D97D44"/>
+  </g>
+
+  <text x="152" y="82" class="wordmark">proptrack<tspan fill="#D97D44">.</tspan></text>
+</svg>

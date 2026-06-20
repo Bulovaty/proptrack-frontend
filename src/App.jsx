@@ -1,8 +1,10 @@
-﻿import { useState, useCallback } from "react";
+﻿import { useState, useCallback, useEffect } from "react";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import { ThemeProvider } from "./context/ThemeContext";
 import { ModeProvider } from "./context/ModeContext";
 import Sidebar from "./components/Sidebar";
+import { LogoMark } from "./components/Logo";
+import Onboarding from "./components/Onboarding";
 import Dashboard from "./pages/Dashboard";
 import Properties from "./pages/Properties";
 import Tenants from "./pages/Tenants";
@@ -20,15 +22,27 @@ function AppContent() {
   const { agent, logout } = useAuth();
   const [activePage, setActivePage] = useState("dashboard");
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  // null = show landing, "login" = show sign in, "register" = show sign up
   const [authMode, setAuthMode] = useState(null);
+  const [showOnboarding, setShowOnboarding] = useState(false);
+
+  // Show onboarding for new users who haven't seen it
+  useEffect(() => {
+    if (agent) {
+      const seen = localStorage.getItem(`proptrack_onboarded_${agent.id}`);
+      if (!seen) setShowOnboarding(true);
+    }
+  }, [agent]);
+
+  const dismissOnboarding = () => {
+    if (agent) localStorage.setItem(`proptrack_onboarded_${agent.id}`, "1");
+    setShowOnboarding(false);
+  };
 
   const navigate = useCallback((page) => {
     setActivePage(page);
     setSidebarOpen(false);
   }, []);
 
-  // Not logged in — show landing or auth
   if (!agent) {
     if (authMode === null) {
       return (
@@ -58,15 +72,22 @@ function AppContent() {
 
   return (
     <div className="app-shell">
+      {/* Mobile Header */}
       <header className="mobile-header">
         <div className="mobile-logo">
-          <span style={{ width: 28, height: 28, background: "var(--accent)", color: "#080c14", borderRadius: 7, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 900, fontSize: 14 }}>P</span>
+          <LogoMark size={26} />
           PropTrack
         </div>
-        <button className="hamburger" onClick={() => setSidebarOpen(true)}>&#9776;</button>
+        <button className="hamburger" onClick={() => setSidebarOpen(true)} aria-label="Open menu">
+          <span className="hamburger-bar" />
+          <span className="hamburger-bar" />
+          <span className="hamburger-bar" />
+        </button>
       </header>
 
-      {sidebarOpen && <div className="sidebar-overlay" onClick={() => setSidebarOpen(false)} />}
+      {sidebarOpen && (
+        <div className="sidebar-overlay" onClick={() => setSidebarOpen(false)} />
+      )}
 
       <Sidebar
         activePage={activePage}
@@ -77,7 +98,17 @@ function AppContent() {
         onClose={() => setSidebarOpen(false)}
       />
 
-      <main className="main-content">{renderPage()}</main>
+      <main className="main-content">
+        {renderPage()}
+      </main>
+
+      {/* Onboarding overlay for new users */}
+      {showOnboarding && (
+        <Onboarding
+          onNavigate={navigate}
+          onDismiss={dismissOnboarding}
+        />
+      )}
     </div>
   );
 }

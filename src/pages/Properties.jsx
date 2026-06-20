@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import { IconSearch, IconBuilding, IconMapPin } from "../components/Icons";
+import EmptyState from "../components/EmptyState";
 
 const API = "https://proptrack-backend-production-a3e9.up.railway.app/api";
 const getToken = () => localStorage.getItem("proptrack_token");
@@ -102,7 +104,7 @@ export default function Properties() {
       {/* Search */}
       <div style={{ marginBottom: 24 }}>
         <div className="search-bar">
-          <span style={{ color: "var(--text-muted)", fontSize: 14 }}>&#128269;</span>
+          <span style={{ color: "var(--text-muted)", display: "flex" }}><IconSearch size={15} /></span>
           <input
             placeholder="Search by name or location..."
             value={search}
@@ -112,7 +114,7 @@ export default function Properties() {
       </div>
 
       {/* Stats */}
-      <div className="stats-grid" style={{ gridTemplateColumns: "repeat(3, 1fr)", marginBottom: 28 }}>
+      <div className="stats-grid" style={{ marginBottom: 28 }}>
         <div className="stat-card blue">
           <div className="stat-glow" />
           <div className="stat-label">Total Properties</div>
@@ -134,14 +136,13 @@ export default function Properties() {
 
       {/* Properties Grid */}
       {filtered.length === 0 ? (
-        <div className="empty-state">
-          <div className="empty-state-icon">&#127962;</div>
-          <div className="empty-state-title">No properties yet</div>
-          <p>Add your first property to start managing units and tenants</p>
-          <button className="btn btn-primary" style={{ marginTop: 16 }} onClick={() => setShowAdd(true)}>
-            + Add Your First Property
-          </button>
-        </div>
+        <EmptyState
+          icon={<IconBuilding size={36} />}
+          title="No properties yet"
+          subtitle="Add your first property to start managing units and tenants"
+          action="+ Add Your First Property"
+          onAction={() => setShowAdd(true)}
+        />
       ) : (
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: 20 }}>
           {filtered.map(p => (
@@ -154,8 +155,8 @@ export default function Properties() {
                   background: "linear-gradient(135deg, var(--accent-dim), var(--accent-dim-2))",
                   border: "1px solid var(--border-accent)",
                   display: "flex", alignItems: "center", justifyContent: "center",
-                  fontSize: 22, flexShrink: 0
-                }}>&#127962;</div>
+                  color: "var(--accent)", flexShrink: 0
+                }}><IconBuilding size={22} /></div>
                 <div style={{ display: "flex", gap: 6 }}>
                   <button
                     className="btn btn-ghost"
@@ -178,8 +179,8 @@ export default function Properties() {
               <div style={{ fontFamily: "var(--font-display)", fontSize: 18, fontWeight: 900, letterSpacing: "-0.02em", marginBottom: 4 }}>
                 {p.name}
               </div>
-              <div style={{ fontSize: 13, color: "var(--text-secondary)", marginBottom: 16 }}>
-                &#128205; {p.location}
+              <div style={{ fontSize: 13, color: "var(--text-secondary)", marginBottom: 16, display: "flex", alignItems: "center", gap: 5 }}>
+                <IconMapPin size={13} /> {p.location}
               </div>
 
               {p.description && (
@@ -240,7 +241,7 @@ export default function Properties() {
       {showAdd && (
         <div className="modal-overlay" onClick={() => setShowAdd(false)}>
           <div className="modal" style={{ maxWidth: 560 }} onClick={e => e.stopPropagation()}>
-            <h2 className="modal-title">&#127962; Add New Property</h2>
+            <h2 className="modal-title">Add New Property</h2>
             <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
               <div className="form-group">
                 <label>Property Name</label>
@@ -326,9 +327,9 @@ export default function Properties() {
       {showUnits && (
         <div className="modal-overlay" onClick={() => setShowUnits(null)}>
           <div className="modal" style={{ maxWidth: 480 }} onClick={e => e.stopPropagation()}>
-            <h2 className="modal-title">&#127962; {showUnits.name}</h2>
-            <div style={{ fontSize: 13, color: "var(--text-secondary)", marginBottom: 20 }}>
-              &#128205; {showUnits.location} &middot; {showUnits.total_units} units total
+            <h2 className="modal-title">{showUnits.name}</h2>
+            <div style={{ fontSize: 13, color: "var(--text-secondary)", marginBottom: 20, display: "flex", alignItems: "center", gap: 5 }}>
+              <IconMapPin size={13} /> {showUnits.location} &middot; {showUnits.total_units} units total
             </div>
             <div style={{
               display: "grid",

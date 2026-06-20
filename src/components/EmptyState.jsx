@@ -4,7 +4,10 @@ export default function EmptyState({ icon, title, subtitle, action, onAction }) 
       display: "flex", flexDirection: "column", alignItems: "center",
       justifyContent: "center", padding: "60px 24px", textAlign: "center"
     }}>
-      <div style={{ fontSize: 48, marginBottom: 16, opacity: 0.6 }}>{icon}</div>
+      <div style={{
+        display: "flex", alignItems: "center", justifyContent: "center",
+        color: "var(--text-muted)", marginBottom: 16, opacity: 0.7
+      }}>{icon}</div>
       <div style={{
         fontFamily: "var(--font-display)", fontSize: 20, fontWeight: 800,
         color: "var(--text-secondary)", marginBottom: 8, letterSpacing: "-0.02em"

@@ -1,4 +1,4 @@
-﻿import { useMode } from "../context/ModeContext";
+import { useMode } from "../context/ModeContext";
 import { LogoMark } from "./Logo";
 import {
   IconDashboard, IconSearch, IconBuilding, IconUsers,
