@@ -149,23 +149,25 @@ export default function Billing() {
         <span className="badge badge-success">{currentPlan} Plan</span>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 20, marginBottom: 36 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 20, marginBottom: 36, paddingTop: 14 }}>
         {PLANS.map(plan => {
           const isCurrent = currentPlan === plan.id;
           return (
-            <div key={plan.id} className="card" style={{
-              position: "relative",
-              border: plan.popular ? "2px solid var(--accent)" : "1px solid var(--border)",
-            }}>
+            <div key={plan.id} style={{ position: "relative" }}>
               {plan.popular && (
                 <div style={{
                   position: "absolute", top: -12, left: "50%", transform: "translateX(-50%)",
                   background: "var(--accent)", color: "#080c14",
                   padding: "3px 16px", borderRadius: 20,
                   fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.06em",
-                  whiteSpace: "nowrap"
+                  whiteSpace: "nowrap", zIndex: 2
                 }}>Most Popular</div>
               )}
+
+              <div className="card" style={{
+                border: plan.popular ? "2px solid var(--accent)" : "1px solid var(--border)",
+                height: "100%",
+              }}>
 
               <div style={{ marginTop: plan.popular ? 8 : 0 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
@@ -213,6 +215,7 @@ export default function Billing() {
                     {paying === plan.id ? "Processing..." : `Upgrade to ${plan.id}`}
                   </button>
                 )}
+              </div>
               </div>
             </div>
           );
