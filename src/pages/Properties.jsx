@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { IconSearch, IconBuilding, IconMapPin } from "../components/Icons";
+import { useAuth } from "../context/AuthContext";
+import { IconSearch, IconBuilding, IconMapPin, IconLock } from "../components/Icons";
 import EmptyState from "../components/EmptyState";
 
 const API = "https://proptrack-backend-production-a3e9.up.railway.app/api";
@@ -15,13 +16,25 @@ const apiFetch = async (endpoint, options = {}) => {
     },
   });
   const data = await res.json();
-  if (!res.ok) throw new Error(data.error || "Request failed");
+  if (!res.ok) {
+    const err = new Error(data.error || "Request failed");
+    err.limitReached = data.limitReached;
+    err.maxProperties = data.maxProperties;
+    throw err;
+  }
   return data;
 };
 
+// Mirrors proptrack-backend/config/plans.js maxProperties values.
+// Used only for the UI display/progress bar — the real enforcement
+// happens server-side in the planLimits middleware, this is just so
+// the button can show "Upgrade" before the user even tries and gets blocked.
+const PLAN_PROPERTY_LIMITS = { Starter: 1, Growth: 5, Pro: null };
+
 const EMPTY_PROPERTY = { name: "", location: "", total_units: "", description: "" };
 
-export default function Properties() {
+export default function Properties({ navigate }) {
+  const { agent } = useAuth();
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showAdd, setShowAdd] = useState(false);
@@ -30,6 +43,10 @@ export default function Properties() {
   const [unitNames, setUnitNames] = useState([""]);
   const [saving, setSaving] = useState(false);
   const [search, setSearch] = useState("");
+  const [limitError, setLimitError] = useState(null);
+
+  const maxProperties = PLAN_PROPERTY_LIMITS[agent?.plan] ?? 1;
+  const atLimit = maxProperties !== null && properties.length >= maxProperties;
 
   useEffect(() => {
     apiFetch("/properties")
@@ -64,8 +81,15 @@ export default function Properties() {
       setForm(EMPTY_PROPERTY);
       setUnitNames([""]);
       setShowAdd(false);
+      setLimitError(null);
     } catch (err) {
-      alert(err.message);
+      if (err.limitReached) {
+        // Show the upgrade prompt inside the modal instead of a generic alert,
+        // since this is an expected, recoverable state (not a real error).
+        setLimitError(err.message);
+      } else {
+        alert(err.message);
+      }
     }
     setSaving(false);
   };
@@ -93,13 +117,35 @@ export default function Properties() {
         <div>
           <h1 className="page-title">Properties</h1>
           <p className="page-subtitle">
-            {properties.length} properties &middot; {properties.reduce((s, p) => s + Number(p.total_units || 0), 0)} total units
+            {properties.length}{maxProperties !== null ? ` of ${maxProperties}` : ""} properties &middot; {properties.reduce((s, p) => s + Number(p.total_units || 0), 0)} total units
           </p>
         </div>
-        <button className="btn btn-primary" onClick={() => setShowAdd(true)}>
-          + Add Property
-        </button>
+        {atLimit ? (
+          <button className="btn btn-primary" onClick={() => navigate ? navigate("billing") : setShowAdd(true)} style={{ gap: 6 }}>
+            <IconLock size={14} /> Upgrade to Add More
+          </button>
+        ) : (
+          <button className="btn btn-primary" onClick={() => setShowAdd(true)}>
+            + Add Property
+          </button>
+        )}
       </div>
+
+      {atLimit && (
+        <div className="sub-banner" style={{ marginBottom: 24 }}>
+          <div>
+            <div style={{ fontWeight: 700, fontSize: 14 }}>
+              You've reached your {agent?.plan} plan's limit of {maxProperties} {maxProperties === 1 ? "property" : "properties"}
+            </div>
+            <div style={{ fontSize: 12, color: "var(--text-secondary)", marginTop: 3 }}>
+              Upgrade to add more properties and unlock bulk SMS, full payment history, and reports
+            </div>
+          </div>
+          <button className="btn btn-primary" style={{ fontSize: 12, padding: "7px 14px" }} onClick={() => navigate && navigate("billing")}>
+            View Plans
+          </button>
+        </div>
+      )}
 
       {/* Search */}
       <div style={{ marginBottom: 24 }}>
@@ -313,8 +359,17 @@ export default function Properties() {
                 </div>
               )}
             </div>
+            {limitError && (
+              <div style={{
+                marginTop: 16, padding: "12px 16px", borderRadius: 8,
+                background: "var(--danger-dim)", border: "1px solid rgba(255,77,109,0.2)",
+                color: "var(--danger)", fontSize: 13
+              }}>
+                {limitError}
+              </div>
+            )}
             <div className="modal-actions">
-              <button className="btn btn-ghost" onClick={() => setShowAdd(false)}>Cancel</button>
+              <button className="btn btn-ghost" onClick={() => { setShowAdd(false); setLimitError(null); }}>Cancel</button>
               <button className="btn btn-primary" onClick={addProperty} disabled={saving}>
                 {saving ? "Saving..." : "Add Property"}
               </button>

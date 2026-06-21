@@ -15,8 +15,10 @@ const apiFetch = async (endpoint, options = {}) => {
   return data;
 };
 
-export default function Payments() {
+export default function Payments({ navigate }) {
   const [payments, setPayments] = useState([]);
+  const [historyLimited, setHistoryLimited] = useState(false);
+  const [historyMonths, setHistoryMonths] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showVerify, setShowVerify] = useState(false);
   const [showAdd, setShowAdd] = useState(false);
@@ -28,7 +30,13 @@ export default function Payments() {
 
   useEffect(() => {
     apiFetch("/payments")
-      .then(setPayments)
+      .then(data => {
+        // Backend now returns { payments, historyLimited, historyMonths }
+        // instead of a plain array, so plan-based history trimming can be signaled.
+        setPayments(data.payments || []);
+        setHistoryLimited(!!data.historyLimited);
+        setHistoryMonths(data.historyMonths);
+      })
       .catch(console.error)
       .finally(() => setLoading(false));
   }, []);
@@ -92,6 +100,22 @@ export default function Payments() {
           </button>
         </div>
       </div>
+
+      {historyLimited && (
+        <div className="sub-banner" style={{ marginBottom: 20 }}>
+          <div>
+            <div style={{ fontWeight: 700, fontSize: 14 }}>
+              Showing the last {historyMonths} months of payments
+            </div>
+            <div style={{ fontSize: 12, color: "var(--text-secondary)", marginTop: 3 }}>
+              Upgrade to Growth or Pro to see your full payment history
+            </div>
+          </div>
+          <button className="btn btn-primary" style={{ fontSize: 12, padding: "7px 14px" }} onClick={() => navigate("billing")}>
+            Upgrade
+          </button>
+        </div>
+      )}
 
       <div className="stats-grid" style={{ marginBottom: 20 }}>
         <div className="stat-card accent">

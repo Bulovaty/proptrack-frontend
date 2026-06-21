@@ -58,9 +58,9 @@ function AppContent() {
   const renderPage = () => {
     switch (activePage) {
       case "dashboard":   return <Dashboard navigate={navigate} />;
-      case "properties":  return <Properties />;
+      case "properties":  return <Properties navigate={navigate} />;
       case "tenants":     return <Tenants />;
-      case "payments":    return <Payments />;
+      case "payments":    return <Payments navigate={navigate} />;
       case "listings":    return <Listings />;
       case "reminders":   return <Reminders />;
       case "search":      return <Search />;
