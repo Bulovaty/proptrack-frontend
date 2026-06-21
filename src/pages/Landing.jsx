@@ -19,9 +19,25 @@ const FEATURES = [
 ];
 
 const PLANS = [
-  { name: "Starter", price: "1,500", properties: "1 property", units: "20 units" },
-  { name: "Growth", price: "3,500", properties: "5 properties", units: "100 units", popular: true },
-  { name: "Pro", price: "6,000", properties: "Unlimited", units: "Unlimited" },
+  {
+    name: "Starter",
+    price: "1,200",
+    properties: "1 property",
+    features: ["Tenant management", "M-Pesa verification", "SMS reminders (one at a time)", "Vacancy listings", "Last 3 months payment history"],
+  },
+  {
+    name: "Growth",
+    price: "2,800",
+    properties: "Up to 5 properties",
+    popular: true,
+    features: ["Everything in Starter", "Bulk SMS to all tenants", "Full payment history", "Basic reports", "Priority email support"],
+  },
+  {
+    name: "Pro",
+    price: "5,500",
+    properties: "Unlimited properties",
+    features: ["Everything in Growth", "Full analytics & reports", "Priority support, direct line"],
+  },
 ];
 
 const STEPS = [
@@ -181,11 +197,17 @@ export default function Landing({ onGetStarted, onLogin }) {
                 <div className="pricing-name">{p.name}</div>
                 <div className="pricing-limits">
                   <span>{p.properties}</span>
-                  <span className="pricing-divider">&middot;</span>
-                  <span>{p.units}</span>
                 </div>
                 <div className="pricing-amount">
                   Ksh {p.price}<span className="pricing-period">/month</span>
+                </div>
+                <div className="pricing-features">
+                  {p.features.map(f => (
+                    <div key={f} className="pricing-feature">
+                      <IconCheck size={13} />
+                      <span>{f}</span>
+                    </div>
+                  ))}
                 </div>
                 <button className="btn btn-primary pricing-btn" onClick={onGetStarted}>
                   Get Started <IconArrowRight size={14} />
