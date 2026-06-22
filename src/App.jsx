@@ -62,7 +62,7 @@ function AppContent() {
       case "tenants":     return <Tenants />;
       case "payments":    return <Payments navigate={navigate} />;
       case "listings":    return <Listings />;
-      case "reminders":   return <Reminders />;
+      case "reminders":   return <Reminders navigate={navigate} />;
       case "search":      return <Search />;
       case "settings":    return <Settings />;
       case "billing":     return <Billing />;
