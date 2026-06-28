@@ -11,10 +11,10 @@ import "./Landing.css";
 
 const FEATURES = [
   { Icon: IconCreditCard, title: "M-Pesa Verification", desc: "Every payment auto-verified against Safaricom records in real time. No more fake screenshots ever." },
-  { Icon: IconBuilding, title: "Property Management", desc: "Manage multiple properties and all their units from one clean dashboard." },
-  { Icon: IconUsers, title: "Tenant Tracking", desc: "Full tenant profiles, payment history, and arrears tracking. Search any tenant in seconds." },
-  { Icon: IconBell, title: "Automated SMS", desc: "Send rent reminders to all tenants in one click. Save up to Ksh 5,000 a month in airtime." },
-  { Icon: IconHome, title: "Vacancy Listings", desc: "Post vacant units with photos and share links on WhatsApp instantly to fill them faster." },
+  { Icon: IconBuilding, title: "Property Management", desc: "Manage multiple properties and all their units from one clean dashboard. Bulk import tenants from Excel via CSV." },
+  { Icon: IconUsers, title: "Tenant Tracking", desc: "Full tenant profiles, payment history, and arrears tracking. Import your existing tenant list in minutes." },
+  { Icon: IconBell, title: "SMS & WhatsApp Reminders", desc: "Send rent reminders via SMS or WhatsApp — individually or to all tenants at once. Save up to Ksh 5,000 a month in airtime." },
+  { Icon: IconHome, title: "Vacancy Listings", desc: "Post vacant units with photos and share links instantly to fill them faster." },
   { Icon: IconSearch, title: "Smart Search", desc: "Find any tenant, unit, or past M-Pesa payment instantly. Your entire history, one search away." },
 ];
 
@@ -23,14 +23,14 @@ const PLANS = [
     name: "Starter",
     price: "1,200",
     properties: "1 property",
-    features: ["Tenant management", "M-Pesa verification", "SMS reminders (one at a time)", "Vacancy listings", "Last 3 months payment history"],
+    features: ["Tenant management", "M-Pesa verification", "SMS & WhatsApp reminders (one at a time)", "Vacancy listings", "CSV tenant import", "Last 3 months payment history"],
   },
   {
     name: "Growth",
     price: "2,800",
     properties: "Up to 5 properties",
     popular: true,
-    features: ["Everything in Starter", "Bulk SMS to all tenants", "Full payment history", "Basic reports", "Priority email support"],
+    features: ["Everything in Starter", "Bulk SMS & WhatsApp to all tenants", "Full payment history", "Basic reports", "Priority email support"],
   },
   {
     name: "Pro",
@@ -43,7 +43,7 @@ const PLANS = [
 const STEPS = [
   { num: "01", title: "Create your account", desc: "Sign up free. No credit card needed." },
   { num: "02", title: "Add your properties", desc: "Enter your properties and name each unit." },
-  { num: "03", title: "Add your tenants", desc: "Link each tenant to their unit with one click." },
+  { num: "03", title: "Add your tenants", desc: "Link each tenant to their unit, or import your whole list from Excel in one upload." },
   { num: "04", title: "Connect your Paybill", desc: "One-time setup with Safaricom. Takes 10 minutes." },
   { num: "05", title: "Payments auto-record", desc: "Every tenant payment appears instantly, verified." },
 ];
@@ -53,6 +53,8 @@ const FAQS = [
   { q: "How does M-Pesa fraud prevention work?", a: "Every payment is verified against Safaricom's actual records in real time. Fake M-Pesa screenshots are detected and flagged immediately." },
   { q: "How long does M-Pesa integration take to set up?", a: "About 10 minutes of setup, then 2-5 business days for Safaricom's Go-Live approval. After that, payments appear automatically forever." },
   { q: "Can I manage multiple properties?", a: "Yes. Add as many properties as your plan allows, each with their own units and tenants. Everything stays organized and separate." },
+  { q: "Can I send reminders on WhatsApp instead of SMS?", a: "Yes. PropTrack lets you send reminders via SMS, WhatsApp, or both at the same time — your choice for each reminder." },
+  { q: "I already have my tenant list in Excel. Do I have to re-enter everything?", a: "No. Download our CSV template, paste your tenant data in, and upload. PropTrack imports your whole list in seconds." },
   { q: "What happens to my data if I cancel?", a: "Your data remains accessible for 30 days after cancellation. You can export everything before your account closes." },
 ];
 
