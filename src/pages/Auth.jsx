@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useMode } from "../context/ModeContext";
 import { LogoFull } from "../components/Logo";
-import { IconSun, IconMoon, IconEye, IconEyeOff, IconArrowLeft, IconLock, IconMail, IconUsers, IconShield } from "../components/Icons";
+import { IconSun, IconMoon, IconEye, IconEyeOff, IconArrowLeft, IconLock, IconMail, IconUsers, IconShield, IconX } from "../components/Icons";
 import "./Auth.css";
 
 function PasswordInput({ placeholder, value, onChange, autoComplete, name }) {
