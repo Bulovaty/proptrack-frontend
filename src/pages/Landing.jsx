@@ -23,20 +23,39 @@ const PLANS = [
     name: "Starter",
     price: "1,200",
     properties: "1 property",
-    features: ["Tenant management", "M-Pesa verification", "SMS & WhatsApp reminders (one at a time)", "Vacancy listings", "CSV tenant import", "Last 3 months payment history"],
+    features: [
+      "Tenant management",
+      "M-Pesa verification",
+      "SMS reminders (30/month)",
+      "Vacancy listings",
+      "CSV tenant import",
+      "Last 3 months payment history",
+    ],
   },
   {
     name: "Growth",
     price: "2,800",
     properties: "Up to 5 properties",
     popular: true,
-    features: ["Everything in Starter", "Bulk SMS & WhatsApp to all tenants", "Full payment history", "Basic reports", "Priority email support"],
+    features: [
+      "Everything in Starter",
+      "Unlimited SMS reminders",
+      "WhatsApp reminders",
+      "Bulk SMS & WhatsApp to all tenants",
+      "Full payment history",
+      "Reports & analytics",
+      "Priority email support",
+    ],
   },
   {
     name: "Pro",
     price: "5,500",
     properties: "Unlimited properties",
-    features: ["Everything in Growth", "Full analytics & reports", "Priority support, direct line"],
+    features: [
+      "Everything in Growth",
+      "Full analytics & reports",
+      "Priority support, direct line",
+    ],
   },
 ];
 

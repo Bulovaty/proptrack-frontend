@@ -23,6 +23,7 @@ const apiFetch = async (endpoint, options = {}) => {
   if (!res.ok) {
     const err = new Error(data.error || "Request failed");
     err.upgradeRequired = data.upgradeRequired;
+    err.smsCapReached = data.smsCapReached;
     throw err;
   }
   return data;
@@ -59,11 +60,11 @@ const BULK_DEFAULTS = {
 };
 
 // ── Channel selector component ─────────────────────────────────────────────
-function ChannelPicker({ value, onChange }) {
+function ChannelPicker({ value, onChange, canWhatsApp = true }) {
   const opts = [
-    { id: "sms", label: "SMS", icon: <IconSend size={13} />, color: "var(--accent)" },
-    { id: "whatsapp", label: "WhatsApp", icon: <IconWhatsapp size={13} />, color: "#25D366" },
-    { id: "both", label: "SMS + WhatsApp", icon: null, color: "var(--accent-2)" },
+    { id: "sms", label: "SMS", icon: <IconSend size={13} />, color: "var(--accent)", locked: false },
+    { id: "whatsapp", label: "WhatsApp", icon: <IconWhatsapp size={13} />, color: "#25D366", locked: !canWhatsApp },
+    { id: "both", label: "SMS + WhatsApp", icon: null, color: "var(--accent-2)", locked: !canWhatsApp },
   ];
   return (
     <div>
@@ -72,19 +73,30 @@ function ChannelPicker({ value, onChange }) {
       </label>
       <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
         {opts.map(o => (
-          <button key={o.id} onClick={() => onChange(o.id)}
+          <button key={o.id}
+            onClick={() => !o.locked && onChange(o.id)}
+            disabled={o.locked}
+            title={o.locked ? "Available on Growth and Pro plans" : undefined}
             style={{
               display: "flex", alignItems: "center", gap: 6,
               padding: "7px 14px", borderRadius: 8, fontSize: 12, fontWeight: 700,
-              cursor: "pointer", transition: "all 0.15s",
+              cursor: o.locked ? "not-allowed" : "pointer",
+              transition: "all 0.15s", opacity: o.locked ? 0.45 : 1,
               border: value === o.id ? `2px solid ${o.color}` : "2px solid var(--border)",
               background: value === o.id ? `${o.color}18` : "var(--bg-secondary)",
               color: value === o.id ? o.color : "var(--text-secondary)",
             }}>
-            {o.icon} {o.label}
+            {o.icon}
+            {o.label}
+            {o.locked && <IconLock size={11} style={{ marginLeft: 2 }} />}
           </button>
         ))}
       </div>
+      {!canWhatsApp && (
+        <div style={{ fontSize: 11, color: "var(--text-muted)", marginTop: 6 }}>
+          WhatsApp reminders available on Growth and Pro plans
+        </div>
+      )}
     </div>
   );
 }
@@ -114,13 +126,24 @@ export default function Reminders({ navigate }) {
   const [bulkError, setBulkError] = useState(null);
 
   const canBulkSms = agent?.plan === "Growth" || agent?.plan === "Pro";
+  const canWhatsApp = agent?.plan === "Growth" || agent?.plan === "Pro";
   const paybill = agent?.paybill_number || "your Paybill";
+
+  // SMS usage for Starter cap display
+  const [smsUsage, setSmsUsage] = useState(null);
 
   useEffect(() => {
     Promise.all([apiFetch("/tenants"), apiFetch("/reminders")])
       .then(([t, r]) => { setTenants(t); setReminders(r); })
       .catch(console.error)
       .finally(() => setLoading(false));
+
+    // Fetch SMS usage for Starter cap display
+    if (agent?.plan === "Starter" || !agent?.plan) {
+      apiFetch("/reminders/usage")
+        .then(setSmsUsage)
+        .catch(console.error);
+    }
   }, []);
 
   const arrearsTenants = tenants.filter(t => t.status === "arrears");
@@ -143,12 +166,10 @@ export default function Reminders({ navigate }) {
     if (!selectedTenant || !singleMessage.trim()) return;
     setSingleSending(true);
 
-    // WhatsApp deep link — opens agent's WhatsApp with tenant's number pre-filled
     if (singleChannel === "whatsapp" || singleChannel === "both") {
       openWhatsApp(selectedTenant.phone, singleMessage);
     }
 
-    // SMS via Africa's Talking — only if channel includes SMS
     if (singleChannel === "sms" || singleChannel === "both") {
       try {
         const newReminder = await apiFetch("/reminders/send", {
@@ -161,8 +182,21 @@ export default function Reminders({ navigate }) {
           }),
         });
         setReminders(prev => [newReminder, ...prev]);
+        // Refresh SMS usage count after sending
+        if (agent?.plan === "Starter" || !agent?.plan) {
+          apiFetch("/reminders/usage").then(setSmsUsage).catch(console.error);
+        }
       } catch (err) {
-        alert("SMS failed: " + err.message);
+        if (err.smsCapReached) {
+          setShowSingle(false);
+          // Refresh usage so banner updates
+          apiFetch("/reminders/usage").then(setSmsUsage).catch(console.error);
+          alert(`Monthly SMS limit reached. Upgrade to Growth for unlimited SMS.`);
+        } else {
+          alert("SMS failed: " + err.message);
+        }
+        setSingleSending(false);
+        return;
       }
     }
 
@@ -264,7 +298,33 @@ export default function Reminders({ navigate }) {
         )}
       </div>
 
-      {/* Stats */}
+      {/* SMS cap banner for Starter */}
+      {smsUsage?.limited && (
+        <div style={{
+          display: "flex", alignItems: "center", justifyContent: "space-between",
+          padding: "12px 16px", borderRadius: 10, marginBottom: 20,
+          background: smsUsage.remaining === 0 ? "var(--danger-dim)" : "var(--accent-dim)",
+          border: `1px solid ${smsUsage.remaining === 0 ? "rgba(255,77,109,0.2)" : "var(--border-accent)"}`,
+          flexWrap: "wrap", gap: 10,
+        }}>
+          <div>
+            <div style={{ fontWeight: 700, fontSize: 13, color: smsUsage.remaining === 0 ? "var(--danger)" : "var(--accent)" }}>
+              {smsUsage.remaining === 0
+                ? "Monthly SMS limit reached"
+                : `${smsUsage.remaining} of ${smsUsage.limit} SMS remaining this month`}
+            </div>
+            <div style={{ fontSize: 12, color: "var(--text-secondary)", marginTop: 2 }}>
+              {smsUsage.remaining === 0
+                ? "Upgrade to Growth for unlimited SMS and WhatsApp reminders"
+                : "Starter plan includes 30 SMS per month. Upgrade for unlimited SMS + WhatsApp."}
+            </div>
+          </div>
+          <button className="btn btn-primary" style={{ fontSize: 12, padding: "7px 14px" }}
+            onClick={() => navigate && navigate("billing")}>
+            Upgrade
+          </button>
+        </div>
+      )}
       <div className="stats-grid" style={{ marginBottom: 24 }}>
         <div className="stat-card danger">
           <div className="stat-glow" />
@@ -313,10 +373,12 @@ export default function Reminders({ navigate }) {
                   <button className="btn btn-ghost" style={{ fontSize: 12, gap: 5 }} onClick={() => openSingle(t)}>
                     Edit &amp; Send
                   </button>
-                  <button className="btn btn-ghost" style={{ fontSize: 12, gap: 5, color: "#25D366", borderColor: "#25D366" }}
-                    onClick={() => sendQuick(t, "whatsapp")} disabled={!!sending}>
-                    <IconWhatsapp size={13} /> WhatsApp
-                  </button>
+                  {canWhatsApp && (
+                    <button className="btn btn-ghost" style={{ fontSize: 12, gap: 5, color: "#25D366", borderColor: "#25D366" }}
+                      onClick={() => sendQuick(t, "whatsapp")} disabled={!!sending}>
+                      <IconWhatsapp size={13} /> WhatsApp
+                    </button>
+                  )}
                   <button className="btn btn-danger" style={{ fontSize: 12, gap: 5 }}
                     onClick={() => sendQuick(t, "sms")} disabled={sending === t.id + "sms"}>
                     <IconSend size={13} /> {sending === t.id + "sms" ? "Sending..." : "SMS"}
@@ -420,7 +482,7 @@ export default function Reminders({ navigate }) {
                 </div>
 
                 <div style={{ marginBottom: 16 }}>
-                  <ChannelPicker value={singleChannel} onChange={setSingleChannel} />
+                  <ChannelPicker value={singleChannel} onChange={setSingleChannel} canWhatsApp={canWhatsApp} />
                 </div>
 
                 {singleChannel === "whatsapp" && (
@@ -496,7 +558,7 @@ export default function Reminders({ navigate }) {
                     </select>
                   </div>
 
-                  <ChannelPicker value={bulkChannel} onChange={setBulkChannel} />
+                  <ChannelPicker value={bulkChannel} onChange={setBulkChannel} canWhatsApp={canWhatsApp} />
 
                   {bulkChannel === "whatsapp" && (
                     <div style={{ padding: "8px 12px", borderRadius: 8, background: "#25D36618", border: "1px solid #25D36640", fontSize: 12, color: "#25D366" }}>

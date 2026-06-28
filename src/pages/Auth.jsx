@@ -195,11 +195,11 @@ export default function Auth({ initialTab = "login", onBack }) {
         </div>
       </div>
 
-      {/* Policy Modal */}
+      {/* Policy Modal — fixed to viewport so it works on both desktop and mobile */}
       {showPolicy && (
-        <div className="modal-overlay" onClick={() => setShowPolicy(null)}>
-          <div className="modal" style={{ maxWidth: 600 }} onClick={e => e.stopPropagation()}>
-            <button onClick={() => setShowPolicy(null)} style={{ position: "absolute", top: 16, right: 16, background: "none", border: "none", color: "var(--text-secondary)", cursor: "pointer", display: "flex" }}>
+        <div className="policy-modal-overlay" onClick={() => setShowPolicy(null)}>
+          <div className="policy-modal" onClick={e => e.stopPropagation()}>
+            <button className="policy-modal-close" onClick={() => setShowPolicy(null)} aria-label="Close">
               <IconX size={18} />
             </button>
             {showPolicy === "terms" ? <TermsContent /> : <PrivacyContent />}
