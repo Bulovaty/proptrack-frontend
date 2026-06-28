@@ -1,7 +1,5 @@
 // Pure SVG icon system — no emojis, no external deps, scales perfectly on all screens
 
-const defaults = { width: 20, height: 20, stroke: "currentColor", fill: "none", strokeWidth: 1.8, strokeLinecap: "round", strokeLinejoin: "round" };
-
 const Icon = ({ d, viewBox = "0 0 24 24", size = 20, ...props }) => (
   <svg width={size} height={size} viewBox={viewBox} fill="none" stroke="currentColor"
     strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" {...props}>
@@ -48,7 +46,6 @@ export const IconInfo = (p) => <Icon size={p.size} {...p} d={<><circle cx="12" c
 export const IconStar = (p) => <Icon size={p.size} {...p} d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />;
 export const IconLock = (p) => <Icon size={p.size} {...p} d={<><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></>} />;
 export const IconMpesa = (p) => (
-  // Custom M-Pesa inspired icon — phone with signal waves
   <svg width={p.size || 20} height={p.size || 20} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
     <rect x="5" y="2" width="14" height="20" rx="2"/>
     <line x1="9" y1="7" x2="15" y2="7"/>
@@ -71,4 +68,3 @@ export const IconDownload = ({ size = 18, style }) => (
     <line x1="12" y1="15" x2="12" y2="3"/>
   </svg>
 );
-
