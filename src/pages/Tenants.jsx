@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { SkeletonTable } from "../components/Skeleton";
 import EmptyState from "../components/EmptyState";
-import { IconSearch, IconUsers } from "../components/Icons";
+import { IconSearch, IconUsers, IconDownload, IconCheck, IconX } from "../components/Icons";
 
 const API = "https://proptrack-backend-production-a3e9.up.railway.app/api";
 const getToken = () => localStorage.getItem("proptrack_token");
@@ -27,6 +27,14 @@ export default function Tenants() {
   const [selected, setSelected] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+
+  // CSV import state
+  const [showImport, setShowImport] = useState(false);
+  const [csvRows, setCsvRows] = useState([]);
+  const [csvErrors, setCsvErrors] = useState([]);
+  const [importing, setImporting] = useState(false);
+  const [importDone, setImportDone] = useState(null);
+  const fileRef = useRef(null);
 
   useEffect(() => {
     Promise.all([apiFetch("/tenants"), apiFetch("/properties")])
@@ -63,6 +71,71 @@ export default function Tenants() {
     setSaving(false);
   };
 
+  // ── Download a blank CSV template the agent fills in ─────────────────────
+  const downloadTemplate = () => {
+    const headers = ["name", "phone", "email", "property_name", "unit_number", "rent_amount", "move_in_date"];
+    const example = ["Jane Muthoni", "0712345678", "jane@example.com", "Sunview Apartments", "A01", "12000", "2024-01-01"];
+    const csv = [headers, example].map(r => r.join(",")).join("\n");
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = "proptrack_tenants_template.csv";
+    a.click(); URL.revokeObjectURL(url);
+  };
+
+  // ── Parse uploaded CSV file client-side ───────────────────────────────────
+  const handleCSVFile = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const lines = ev.target.result.trim().split("\n");
+      const headers = lines[0].split(",").map(h => h.trim().toLowerCase());
+      const required = ["name", "phone", "unit_number", "rent_amount"];
+      const missing = required.filter(r => !headers.includes(r));
+      if (missing.length) {
+        setCsvErrors([`Missing required columns: ${missing.join(", ")}`]);
+        setCsvRows([]);
+        return;
+      }
+      const rows = lines.slice(1).map((line, i) => {
+        const vals = line.split(",").map(v => v.trim().replace(/^"|"$/g, ""));
+        const row = {};
+        headers.forEach((h, idx) => { row[h] = vals[idx] || ""; });
+        const errors = [];
+        if (!row.name) errors.push("Name missing");
+        if (!row.phone) errors.push("Phone missing");
+        if (!row.unit_number) errors.push("Unit number missing");
+        if (!row.rent_amount || isNaN(Number(row.rent_amount))) errors.push("Rent amount invalid");
+        return { ...row, _row: i + 2, _errors: errors };
+      }).filter(r => r.name || r.phone); // skip blank rows
+      setCsvRows(rows);
+      setCsvErrors([]);
+      setImportDone(null);
+    };
+    reader.readAsText(file);
+    e.target.value = ""; // reset so same file can be re-uploaded
+  };
+
+  // ── Send parsed rows to backend for bulk insert ───────────────────────────
+  const runImport = async () => {
+    const valid = csvRows.filter(r => r._errors.length === 0);
+    if (!valid.length) return;
+    setImporting(true);
+    try {
+      const result = await apiFetch("/tenants/import", {
+        method: "POST",
+        body: JSON.stringify({ tenants: valid }),
+      });
+      setImportDone(result);
+      // Refresh tenant list
+      apiFetch("/tenants").then(setTenants).catch(console.error);
+    } catch (err) {
+      alert("Import failed: " + err.message);
+    }
+    setImporting(false);
+  };
+
   if (loading) return (
     <div>
       <div className="page-header">
@@ -79,7 +152,12 @@ export default function Tenants() {
           <h1 className="page-title">Tenants</h1>
           <p className="page-subtitle">{tenants.length} tenants across all units</p>
         </div>
-        <button className="btn btn-primary" onClick={() => setShowModal(true)}>+ Add Tenant</button>
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+          <button className="btn btn-ghost" onClick={() => { setShowImport(true); setCsvRows([]); setImportDone(null); }} style={{ gap: 6 }}>
+            <IconDownload size={14} /> Import CSV
+          </button>
+          <button className="btn btn-primary" onClick={() => setShowModal(true)}>+ Add Tenant</button>
+        </div>
       </div>
 
       <div style={{ marginBottom: 24 }}>
@@ -218,6 +296,119 @@ export default function Tenants() {
             <div className="modal-actions">
               <button className="btn btn-ghost" onClick={() => setSelected(null)}>Close</button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Hidden file input for CSV upload */}
+      <input ref={fileRef} type="file" accept=".csv" style={{ display: "none" }} onChange={handleCSVFile} />
+
+      {/* ── CSV Import Modal ── */}
+      {showImport && (
+        <div className="modal-overlay" onClick={() => setShowImport(false)}>
+          <div className="modal" style={{ maxWidth: 680 }} onClick={e => e.stopPropagation()}>
+            <h2 className="modal-title">Import Tenants from CSV</h2>
+
+            {importDone ? (
+              <div style={{ textAlign: "center", padding: "24px 0" }}>
+                <div style={{ color: "var(--accent)", display: "flex", justifyContent: "center", marginBottom: 12 }}>
+                  <IconCheck size={44} />
+                </div>
+                <div style={{ fontWeight: 800, fontSize: 20, marginBottom: 6 }}>Import Complete</div>
+                <div style={{ color: "var(--text-secondary)", fontSize: 14 }}>
+                  <strong>{importDone.imported}</strong> tenants added
+                  {importDone.skipped > 0 && <span style={{ color: "var(--warning)" }}> &middot; {importDone.skipped} skipped</span>}
+                </div>
+                <button className="btn btn-ghost" style={{ marginTop: 20 }}
+                  onClick={() => { setShowImport(false); setCsvRows([]); setImportDone(null); }}>
+                  Close
+                </button>
+              </div>
+            ) : (
+              <>
+                {/* Step 1 — Download template */}
+                <div style={{ background: "var(--bg-secondary)", borderRadius: 10, padding: "14px 16px", marginBottom: 20 }}>
+                  <div style={{ fontWeight: 700, fontSize: 13, marginBottom: 4 }}>Step 1 — Download the template</div>
+                  <div style={{ fontSize: 12, color: "var(--text-secondary)", marginBottom: 10 }}>
+                    Fill it in with your tenant data in Excel or Google Sheets, then upload it below.
+                    Required columns: <code>name</code>, <code>phone</code>, <code>unit_number</code>, <code>rent_amount</code>.
+                    Optional: <code>email</code>, <code>property_name</code>, <code>move_in_date</code>.
+                  </div>
+                  <button className="btn btn-ghost" style={{ fontSize: 12, gap: 6 }} onClick={downloadTemplate}>
+                    <IconDownload size={13} /> Download Template (CSV)
+                  </button>
+                </div>
+
+                {/* Step 2 — Upload */}
+                <div style={{ marginBottom: 20 }}>
+                  <div style={{ fontWeight: 700, fontSize: 13, marginBottom: 8 }}>Step 2 — Upload your filled CSV</div>
+                  <button className="btn btn-ghost" style={{ fontSize: 13, gap: 6 }} onClick={() => fileRef.current?.click()}>
+                    <IconDownload size={14} style={{ transform: "rotate(180deg)" }} /> Choose CSV File
+                  </button>
+                </div>
+
+                {/* CSV errors */}
+                {csvErrors.length > 0 && (
+                  <div style={{ padding: "10px 14px", borderRadius: 8, background: "var(--danger-dim)", color: "var(--danger)", fontSize: 13, border: "1px solid rgba(255,77,109,0.2)", marginBottom: 16 }}>
+                    {csvErrors.map((e, i) => <div key={i}>{e}</div>)}
+                  </div>
+                )}
+
+                {/* Preview table */}
+                {csvRows.length > 0 && (
+                  <div style={{ marginBottom: 20 }}>
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
+                      <div style={{ fontWeight: 700, fontSize: 13 }}>
+                        Preview — {csvRows.filter(r => r._errors.length === 0).length} valid / {csvRows.filter(r => r._errors.length > 0).length} with errors
+                      </div>
+                    </div>
+                    <div style={{ maxHeight: 240, overflowY: "auto", borderRadius: 8, border: "1px solid var(--border)" }}>
+                      <table style={{ width: "100%", fontSize: 12 }}>
+                        <thead>
+                          <tr>
+                            <th style={{ padding: "8px 10px", textAlign: "left", background: "var(--bg-secondary)", fontWeight: 700, fontSize: 11 }}>Name</th>
+                            <th style={{ padding: "8px 10px", textAlign: "left", background: "var(--bg-secondary)", fontWeight: 700, fontSize: 11 }}>Phone</th>
+                            <th style={{ padding: "8px 10px", textAlign: "left", background: "var(--bg-secondary)", fontWeight: 700, fontSize: 11 }}>Unit</th>
+                            <th style={{ padding: "8px 10px", textAlign: "left", background: "var(--bg-secondary)", fontWeight: 700, fontSize: 11 }}>Rent</th>
+                            <th style={{ padding: "8px 10px", textAlign: "left", background: "var(--bg-secondary)", fontWeight: 700, fontSize: 11 }}>Status</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {csvRows.map((r, i) => (
+                            <tr key={i} style={{ background: r._errors.length ? "var(--danger-dim)" : "transparent" }}>
+                              <td style={{ padding: "7px 10px" }}>{r.name}</td>
+                              <td style={{ padding: "7px 10px" }}>{r.phone}</td>
+                              <td style={{ padding: "7px 10px", fontFamily: "monospace", color: "var(--accent)" }}>{r.unit_number}</td>
+                              <td style={{ padding: "7px 10px" }}>Ksh {Number(r.rent_amount || 0).toLocaleString()}</td>
+                              <td style={{ padding: "7px 10px" }}>
+                                {r._errors.length ? (
+                                  <span style={{ color: "var(--danger)", fontSize: 11 }}><IconX size={11} /> {r._errors.join(", ")}</span>
+                                ) : (
+                                  <span style={{ color: "var(--accent)" }}><IconCheck size={11} /> Ready</span>
+                                )}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                )}
+
+                <div className="modal-actions">
+                  <button className="btn btn-ghost" onClick={() => setShowImport(false)}>Cancel</button>
+                  {csvRows.length > 0 && (
+                    <button className="btn btn-primary" onClick={runImport}
+                      disabled={importing || csvRows.filter(r => r._errors.length === 0).length === 0}
+                      style={{ gap: 6 }}>
+                      {importing
+                        ? "Importing..."
+                        : `Import ${csvRows.filter(r => r._errors.length === 0).length} Tenants`}
+                    </button>
+                  )}
+                </div>
+              </>
+            )}
           </div>
         </div>
       )}
