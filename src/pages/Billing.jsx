@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { IconCheck, IconX, IconBuilding, IconShield, IconTrendingUp, IconRefresh, IconLock } from "../components/Icons";
 
-const API = "https://proptrack-backend-production-a3e9.up.railway.app/api";
+const API = import.meta.env.VITE_API_URL + "/api";
 const getToken = () => localStorage.getItem("proptrack_token");
 
 // Mirrors proptrack-backend/config/plans.js — keep these in sync if pricing changes.

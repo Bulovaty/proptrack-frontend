@@ -3,7 +3,7 @@ import { SkeletonTable } from "../components/Skeleton";
 import EmptyState from "../components/EmptyState";
 import { IconCreditCard, IconSearch, IconCheck, IconX, IconPlus, IconShield } from "../components/Icons";
 
-const API = "https://proptrack-backend-production-a3e9.up.railway.app/api";
+const API = import.meta.env.VITE_API_URL + "/api";
 const getToken = () => localStorage.getItem("proptrack_token");
 const apiFetch = async (endpoint, options = {}) => {
   const res = await fetch(`${API}${endpoint}`, {
