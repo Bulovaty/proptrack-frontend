@@ -3,7 +3,7 @@ import { LogoMark } from "./Logo";
 import {
   IconDashboard, IconSearch, IconBuilding, IconUsers,
   IconCreditCard, IconHome, IconBell, IconDollarSign,
-  IconSettings, IconLogout, IconSun, IconMoon, IconTrendingUp
+  IconSettings, IconLogout, IconSun, IconMoon, IconTrendingUp, IconInbox
 } from "./Icons";
 import "./Sidebar.css";
 
@@ -19,6 +19,7 @@ const NAV_ALL = [
   { id: "reports",    label: "Reports",    Icon: IconTrendingUp,  plans: ["Growth", "Pro"] },
   { id: "billing",    label: "Billing",    Icon: IconDollarSign,  plans: null },
   { id: "settings",   label: "Settings",   Icon: IconSettings,    plans: null },
+  { id: "inquiries", label: "Inquiries", Icon: IconInbox, plans: null }
 ];
 
 export default function Sidebar({ activePage, setActivePage, agent, logout, isOpen, onClose }) {

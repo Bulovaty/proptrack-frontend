@@ -18,6 +18,8 @@ import Auth from "./pages/Auth";
 import Landing from "./pages/Landing";
 import "./App.css";
 import Browse from "./pages/Browse";
+import Inquiries from "./pages/Inquiries";
+import Inquiries from "./pages/Inquiries";
 
 function AppContent() {
   const { agent, logout } = useAuth();
@@ -68,8 +70,10 @@ function AppContent() {
       case "reminders":   return <Reminders navigate={navigate} />;
       case "search":      return <Search />;
       case "settings":    return <Settings />;
+      case "inquiries":   return <Inquiries />;
       case "billing":     return <Billing />;
       case "browse":      return <Browse />;
+      case "inquiries": return <Inquiries />;
       default:            return <Dashboard navigate={navigate} />;
     }
   };
