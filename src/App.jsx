@@ -17,6 +17,7 @@ import Billing from "./pages/Billing";
 import Auth from "./pages/Auth";
 import Landing from "./pages/Landing";
 import "./App.css";
+import Browse from "./pages/Browse";
 
 function AppContent() {
   const { agent, logout } = useAuth();
@@ -44,16 +45,18 @@ function AppContent() {
   }, []);
 
   if (!agent) {
+    if (activePage === "browse") return <Browse />;
     if (authMode === null) {
       return (
-        <Landing
-          onGetStarted={() => setAuthMode("register")}
-          onLogin={() => setAuthMode("login")}
-        />
+       <Landing
+  onGetStarted={(page) => page === "browse" ? setActivePage("browse") : setAuthMode("register")}
+  onLogin={() => setAuthMode("login")}
+/>
       );
     }
     return <Auth initialTab={authMode} onBack={() => setAuthMode(null)} />;
-  }
+  } <Auth initialTab={authMode} onBack={() => setAuthMode(null)} />;
+  
 
   const renderPage = () => {
     switch (activePage) {
@@ -66,6 +69,7 @@ function AppContent() {
       case "search":      return <Search />;
       case "settings":    return <Settings />;
       case "billing":     return <Billing />;
+      case "browse":      return <Browse />;
       default:            return <Dashboard navigate={navigate} />;
     }
   };

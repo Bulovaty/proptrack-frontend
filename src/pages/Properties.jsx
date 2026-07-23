@@ -25,10 +25,6 @@ const apiFetch = async (endpoint, options = {}) => {
   return data;
 };
 
-// Mirrors proptrack-backend/config/plans.js maxProperties values.
-// Used only for the UI display/progress bar — the real enforcement
-// happens server-side in the planLimits middleware, this is just so
-// the button can show "Upgrade" before the user even tries and gets blocked.
 const PLAN_PROPERTY_LIMITS = { Starter: 1, Growth: 5, Pro: null };
 
 const EMPTY_PROPERTY = { name: "", location: "", total_units: "", description: "" };

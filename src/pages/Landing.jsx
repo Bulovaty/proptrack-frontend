@@ -126,14 +126,17 @@ export default function Landing({ onGetStarted, onLogin }) {
           Track tenants, verify M-Pesa payments automatically, send SMS reminders,
           and list vacant units &mdash; all in one place. No more logbooks. No more fake receipts.
         </p>
-        <div className="hero-cta">
-          <button className="btn btn-primary hero-btn" onClick={onGetStarted}>
-            Start Free <IconArrowRight size={16} />
-          </button>
-          <button className="btn btn-ghost hero-btn" onClick={onLogin}>
-            Sign In
-          </button>
-        </div>
+      <div className="hero-cta">
+  <button className="btn btn-primary hero-btn" onClick={onGetStarted}>
+    Start Free <IconArrowRight size={16} />
+  </button>
+  <button className="btn btn-ghost hero-btn" onClick={onLogin}>
+    Sign In
+  </button>
+  <button className="btn btn-ghost hero-btn" onClick={() => onGetStarted("browse")}>
+    Browse Listings
+  </button>
+</div>
         <p className="hero-note">Free to start &middot; No credit card &middot; Cancel anytime</p>
 
         <div className="hero-stats">
