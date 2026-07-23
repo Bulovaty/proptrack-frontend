@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect } from "react";
 
-const API = "https://proptrack-backend-production-a3e9.up.railway.app/api";
+const API = import.meta.env.VITE_API_URL + "/api";
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
