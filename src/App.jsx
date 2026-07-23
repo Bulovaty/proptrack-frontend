@@ -19,7 +19,6 @@ import Landing from "./pages/Landing";
 import "./App.css";
 import Browse from "./pages/Browse";
 import Inquiries from "./pages/Inquiries";
-import Inquiries from "./pages/Inquiries";
 
 function AppContent() {
   const { agent, logout } = useAuth();
