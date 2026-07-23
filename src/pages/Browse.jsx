@@ -336,15 +336,15 @@ export default function Browse() {
                     </div>
                   )}
 
-                  {listing.bedrooms && (
+                  {	listing.beds && (
                     <div style={{ display: "flex", alignItems: "center", gap: 5, color: "var(--text-secondary)", fontSize: 12, marginBottom: 10 }}>
-                      <IconBed /> {listing.bedrooms} Bedroom{listing.bedrooms > 1 ? "s" : ""}
+                      <IconBed /> {	listing.beds} Bedroom{	listing.beds > 1 ? "s" : ""}
                     </div>
                   )}
 
                   <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                     <span style={{ fontFamily: "var(--font-display)", fontSize: 16, fontWeight: 900, color: "var(--accent)" }}>
-                      {formatPrice(listing.price)}
+                      {formatPrice(listing.rent)}
                     </span>
                     <span style={{ fontSize: 11, color: "var(--text-muted)" }}>/month</span>
                   </div>
@@ -387,14 +387,14 @@ export default function Browse() {
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 18 }}>
               <div style={{ background: "var(--bg-secondary)", borderRadius: "var(--radius-sm)", padding: "12px 14px" }}>
                 <div style={{ fontSize: 10, color: "var(--text-muted)", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: 4 }}>Rent</div>
-                <div style={{ fontFamily: "var(--font-display)", fontSize: 20, fontWeight: 900, color: "var(--accent)" }}>{formatPrice(selected.price)}</div>
+                <div style={{ fontFamily: "var(--font-display)", fontSize: 20, fontWeight: 900, color: "var(--accent)" }}>{formatPrice(	selected.rent)}</div>
                 <div style={{ fontSize: 11, color: "var(--text-muted)" }}>per month</div>
               </div>
-              {selected.bedrooms && (
+              {	selected.beds && (
                 <div style={{ background: "var(--bg-secondary)", borderRadius: "var(--radius-sm)", padding: "12px 14px" }}>
                   <div style={{ fontSize: 10, color: "var(--text-muted)", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: 4 }}>Bedrooms</div>
-                  <div style={{ fontFamily: "var(--font-display)", fontSize: 20, fontWeight: 900, color: "var(--text-primary)" }}>{selected.bedrooms}</div>
-                  <div style={{ fontSize: 11, color: "var(--text-muted)" }}>bedroom{selected.bedrooms > 1 ? "s" : ""}</div>
+                  <div style={{ fontFamily: "var(--font-display)", fontSize: 20, fontWeight: 900, color: "var(--text-primary)" }}>{	selected.beds}</div>
+                  <div style={{ fontSize: 11, color: "var(--text-muted)" }}>bedroom{	selected.beds > 1 ? "s" : ""}</div>
                 </div>
               )}
             </div>
@@ -523,7 +523,7 @@ export default function Browse() {
             ) : (
               <>
                 <div style={{ background: "var(--bg-secondary)", borderRadius: "var(--radius-sm)", padding: "10px 14px", marginBottom: 18, fontSize: 12, color: "var(--text-secondary)" }}>
-                  <strong style={{ color: "var(--text-primary)" }}>{selected.title || selected.name}</strong> — {formatPrice(selected.price)}/mo
+                  <strong style={{ color: "var(--text-primary)" }}>{selected.title || selected.name}</strong> — {formatPrice(	selected.rent)}/mo
                 </div>
                 <form onSubmit={handleInquiry} style={{ display: "flex", flexDirection: "column", gap: 14 }}>
                   <div className="form-group">
