@@ -19,7 +19,7 @@ const apiFetch = async (endpoint, options = {}) => {
   return data;
 };
 
-const EMPTY = { title: "", location: "", rent: "", type: "Apartment", beds: 1, baths: 1, description: "", contact: "", image_url: "" };
+const EMPTY = { title: "", location: "", rent: "", type: "Apartment", beds: 1, baths: 1, description: "", contact: "", image_url: "", images: [] };
 
 // Resize + compress image client-side before converting to base64
 const fileToCompressedBase64 = (file) => new Promise((resolve, reject) => {
@@ -61,22 +61,25 @@ export default function Listings() {
 
   const available = listings.filter(l => l.status === "available").length;
 
-  const handleImageSelect = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    if (!file.type.startsWith("image/")) {
-      alert("Please select an image file");
-      return;
-    }
-    setUploading(true);
-    try {
-      const base64 = await fileToCompressedBase64(file);
-      setForm(f => ({ ...f, image_url: base64 }));
-    } catch (err) {
-      alert("Failed to process image");
-    }
-    setUploading(false);
-  };
+const handleImageSelect = async (e) => {
+  const files = Array.from(e.target.files);
+  if (!files.length) return;
+  const remaining = 10 - form.images.length;
+  if (remaining <= 0) { alert("Maximum 10 images allowed"); return; }
+  const toProcess = files.slice(0, remaining);
+  setUploading(true);
+  try {
+    const base64s = await Promise.all(toProcess.map(fileToCompressedBase64));
+    setForm(f => ({
+      ...f,
+      images: [...f.images, ...base64s],
+      image_url: f.image_url || base64s[0]
+    }));
+  } catch {
+    alert("Failed to process image");
+  }
+  setUploading(false);
+};
 
   const addListing = async () => {
     if (!form.title || !form.location || !form.rent) return;
@@ -140,9 +143,9 @@ export default function Listings() {
             {/* Image */}
             <div style={{
               width: "100%", height: 160,
-              background: l.image_url
-                ? `url(${l.image_url}) center/cover no-repeat`
-                : "linear-gradient(135deg, var(--accent-dim), var(--bg-secondary))",
+              background: (l.images?.[0] || l.image_url)
+  ? `url(${l.images?.[0] || l.image_url}) center/cover no-repeat`
+  : "linear-gradient(135deg, var(--accent-dim), var(--bg-secondary))",
               display: "flex", alignItems: "center", justifyContent: "center",
               fontSize: 40, position: "relative"
             }}>
@@ -199,44 +202,77 @@ export default function Listings() {
             <h2 className="modal-title">Post New Listing</h2>
             <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
 
-              {/* Image Upload */}
-              <div className="form-group">
-                <label>Property Photo</label>
-                <div
-                  onClick={() => fileInputRef.current?.click()}
-                  style={{
-                    width: "100%", height: 140, borderRadius: 10,
-                    border: "1px dashed var(--border)",
-                    background: form.image_url
-                      ? `url(${form.image_url}) center/cover no-repeat`
-                      : "var(--bg-secondary)",
-                    display: "flex", alignItems: "center", justifyContent: "center",
-                    cursor: "pointer", position: "relative", overflow: "hidden"
-                  }}
-                >
-                  {!form.image_url && (
-                    <div style={{ textAlign: "center", color: "var(--text-muted)", fontSize: 13 }}>
-                      {uploading ? "Processing image..." : "Click to upload a photo"}
-                    </div>
-                  )}
-                  {form.image_url && (
-                    <div style={{
-                      position: "absolute", top: 8, right: 8,
-                      background: "rgba(0,0,0,0.6)", borderRadius: 6,
-                      padding: "4px 8px", fontSize: 11, color: "#fff"
-                    }}>
-                      Change photo
-                    </div>
-                  )}
-                </div>
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/*"
-                  style={{ display: "none" }}
-                  onChange={handleImageSelect}
-                />
-              </div>
+            {/* Image Upload */}
+<div className="form-group">
+  <label>Property Photos (up to 10)</label>
+  
+  {/* Image previews */}
+  {form.images.length > 0 && (
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 8, marginBottom: 10 }}>
+      {form.images.map((img, i) => (
+        <div key={i} style={{ position: "relative", aspectRatio: "1", borderRadius: 8, overflow: "hidden" }}>
+          <img src={img} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+          <button
+            onClick={() => setForm(f => ({
+              ...f,
+              images: f.images.filter((_, idx) => idx !== i),
+              image_url: i === 0 ? (f.images[1] || "") : f.image_url
+            }))}
+            style={{
+              position: "absolute", top: 4, right: 4,
+              background: "rgba(0,0,0,0.6)", border: "none", borderRadius: "50%",
+              width: 20, height: 20, cursor: "pointer", color: "#fff",
+              display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12
+            }}
+          >✕</button>
+          {i === 0 && (
+            <div style={{
+              position: "absolute", bottom: 4, left: 4,
+              background: "var(--accent)", color: "#080c14",
+              fontSize: 9, fontWeight: 800, padding: "2px 6px", borderRadius: 20
+            }}>MAIN</div>
+          )}
+        </div>
+      ))}
+      {form.images.length < 10 && (
+        <div
+          onClick={() => fileInputRef.current?.click()}
+          style={{
+            aspectRatio: "1", borderRadius: 8, border: "1px dashed var(--border)",
+            background: "var(--bg-secondary)", display: "flex", alignItems: "center",
+            justifyContent: "center", cursor: "pointer", color: "var(--text-muted)", fontSize: 24
+          }}
+        >+</div>
+      )}
+    </div>
+  )}
+
+  {form.images.length === 0 && (
+    <div
+      onClick={() => fileInputRef.current?.click()}
+      style={{
+        width: "100%", height: 120, borderRadius: 10,
+        border: "1px dashed var(--border)", background: "var(--bg-secondary)",
+        display: "flex", alignItems: "center", justifyContent: "center",
+        cursor: "pointer", color: "var(--text-muted)", fontSize: 13
+      }}
+    >
+      {uploading ? "Processing..." : "Click to upload photos (up to 10)"}
+    </div>
+  )}
+
+  <input
+    ref={fileInputRef}
+    type="file"
+    accept="image/*"
+    multiple
+    style={{ display: "none" }}
+    onChange={handleImageSelect}
+  />
+  <div style={{ fontSize: 11, color: "var(--text-muted)", marginTop: 4 }}>
+    {form.images.length}/10 photos · First photo is the main image
+  </div>
+</div>
 
               <div className="form-group">
                 <label>Property Title</label>
