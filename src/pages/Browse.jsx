@@ -72,6 +72,7 @@ export default function Browse() {
   const [inquiry, setInquiry] = useState({ message: "", viewing_date: "" });
   const [inquiryLoading, setInquiryLoading] = useState(false);
   const [inquirySuccess, setInquirySuccess] = useState(false);
+  const [activeImage, setActiveImage] = useState(0);
 
   // Load tenant from localStorage
   useEffect(() => {
@@ -155,9 +156,10 @@ export default function Browse() {
     }
   };
 
-  const openListing = (listing) => {
-    setSelected(listing);
-  };
+ const openListing = (listing) => {
+  setSelected(listing);
+  setActiveImage(0);
+};
 
   const handleBookViewing = () => {
     if (!tenant) { setAuthMode("login"); }
@@ -375,15 +377,35 @@ export default function Browse() {
                 <IconX />
               </button>
             </div>
-
-            {/* Image */}
-            <div style={{
-              height: 180, background: "linear-gradient(135deg, var(--bg-elevated), var(--bg-hover))",
-              borderRadius: "var(--radius-sm)", display: "flex", alignItems: "center",
-              justifyContent: "center", color: "var(--text-muted)", marginBottom: 18
-            }}>
-              <IconHome />
-            </div>
+{/* Image Gallery */}
+{(selected.images?.length > 0 || selected.image_url) ? (
+  <div style={{ marginBottom: 18 }}>
+    <div style={{
+      height: 200, borderRadius: "var(--radius-sm)", overflow: "hidden",
+      background: `url(${selected.images?.[activeImage] || selected.image_url}) center/cover no-repeat`
+    }} />
+    {selected.images?.length > 1 && (
+      <div style={{ display: "flex", gap: 6, marginTop: 8, overflowX: "auto" }}>
+        {selected.images.map((img, i) => (
+          <div key={i} onClick={() => setActiveImage(i)} style={{
+            width: 52, height: 52, borderRadius: 8, flexShrink: 0, cursor: "pointer",
+            background: `url(${img}) center/cover no-repeat`,
+            border: activeImage === i ? "2px solid var(--accent)" : "2px solid transparent",
+            opacity: activeImage === i ? 1 : 0.6, transition: "all 0.15s"
+          }} />
+        ))}
+      </div>
+    )}
+  </div>
+) : (
+  <div style={{
+    height: 200, background: "linear-gradient(135deg, var(--bg-elevated), var(--bg-hover))",
+    borderRadius: "var(--radius-sm)", display: "flex", alignItems: "center",
+    justifyContent: "center", color: "var(--text-muted)", marginBottom: 18
+  }}>
+    <IconHome />
+  </div>
+)}
 
             {/* Details Grid */}
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 18 }}>
