@@ -314,6 +314,7 @@ export default function Browse() {
                 onClick={() => openListing(listing)}>
                 {/* Image placeholder */}
                 <div style={{
+                  height: 180,
                   background: (listing.images?.[0] || listing.image_url)
   ? `url(${listing.images?.[0] || listing.image_url}) center/cover no-repeat`
   : "linear-gradient(135deg, var(--bg-elevated), var(--bg-hover))",
