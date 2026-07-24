@@ -51,6 +51,8 @@ export default function Listings() {
   const [copied, setCopied] = useState(null);
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef(null);
+  const [editing, setEditing] = useState(null);
+const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     apiFetch("/listings")
@@ -108,6 +110,39 @@ const handleImageSelect = async (e) => {
       alert(err.message);
     }
   };
+  const editListing = (l) => {
+  setEditing(l);
+  setForm({
+    title: l.title,
+    location: l.location,
+    rent: l.rent,
+    type: l.type,
+    beds: l.beds,
+    baths: l.baths,
+    description: l.description || "",
+    contact: l.contact || "",
+    image_url: l.image_url || "",
+    images: l.images || [],
+  });
+  setShowModal(true);
+};
+const saveListing = async () => {
+  if (!form.title || !form.location || !form.rent) return;
+  setSaving(true);
+  try {
+    const updated = await apiFetch(`/listings/${editing.id}`, {
+      method: "PUT",
+      body: JSON.stringify(form),
+    });
+    setListings(listings.map(l => l.id === editing.id ? updated : l));
+    setForm(EMPTY);
+    setEditing(null);
+    setShowModal(false);
+  } catch (err) {
+    alert(err.message);
+  }
+  setSaving(false);
+};
 
   const copyLink = (id) => {
     navigator.clipboard.writeText(`https://proptrack.co.ke/listings/${id}`);
@@ -179,17 +214,20 @@ const handleImageSelect = async (e) => {
               <p style={{ fontSize: 13, color: "var(--text-secondary)", marginBottom: 16, lineHeight: 1.5 }}>
                 {l.description}
               </p>
-
-              <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-                <button className="btn btn-ghost" style={{ flex: 1, fontSize: 12, justifyContent: "center", gap: 5, minWidth: 120 }}
-                  onClick={() => copyLink(l.id)}>
-                  {copied === l.id ? <><IconCheck size={13} /> Copied!</> : <><IconCopy size={13} /> Share Link</>}
-                </button>
-                <button className="btn btn-ghost" style={{ flex: 1, fontSize: 12, justifyContent: "center", minWidth: 120 }}
-                  onClick={() => toggleStatus(l)}>
-                  {l.status === "available" ? "Mark Taken" : "Mark Available"}
-                </button>
-              </div>
+<div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+  <button className="btn btn-ghost" style={{ flex: 1, fontSize: 12, justifyContent: "center", minWidth: 80 }}
+    onClick={() => editListing(l)}>
+    ✏️ Edit
+  </button>
+  <button className="btn btn-ghost" style={{ flex: 1, fontSize: 12, justifyContent: "center", gap: 5, minWidth: 80 }}
+    onClick={() => copyLink(l.id)}>
+    {copied === l.id ? <><IconCheck size={13} /> Copied!</> : <><IconCopy size={13} /> Share</>}
+  </button>
+  <button className="btn btn-ghost" style={{ flex: 1, fontSize: 12, justifyContent: "center", minWidth: 80 }}
+    onClick={() => toggleStatus(l)}>
+    {l.status === "available" ? "Mark Taken" : "Available"}
+  </button>
+</div>
             </div>
           </div>
         ))}
@@ -197,9 +235,9 @@ const handleImageSelect = async (e) => {
 
       {/* Add Listing Modal */}
       {showModal && (
-        <div className="modal-overlay" onClick={() => setShowModal(false)}>
+        <div className="modal-overlay" onClick={() => { setShowModal(false); setEditing(null); setForm(EMPTY); }}>
           <div className="modal" style={{ maxWidth: 580 }} onClick={e => e.stopPropagation()}>
-            <h2 className="modal-title">Post New Listing</h2>
+            <h2 className="modal-title">{editing ? "Edit Listing" : "Post New Listing"}</h2>
             <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
 
             {/* Image Upload */}
@@ -328,10 +366,10 @@ const handleImageSelect = async (e) => {
               </div>
             </div>
             <div className="modal-actions">
-              <button className="btn btn-ghost" onClick={() => setShowModal(false)}>Cancel</button>
-              <button className="btn btn-primary" onClick={addListing} disabled={uploading}>
-                Post Listing
-              </button>
+              <button className="btn btn-ghost" onClick={() => { setShowModal(false); setEditing(null); setForm(EMPTY); }}>Cancel</button>
+              <button className="btn btn-primary" onClick={editing ? saveListing : addListing} disabled={uploading || saving}>
+  {saving ? "Saving..." : editing ? "Save Changes" : "Post Listing"}
+</button>
             </div>
           </div>
         </div>
