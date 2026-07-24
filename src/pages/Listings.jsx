@@ -246,10 +246,10 @@ const saveListing = async () => {
   
   {/* Image previews */}
   {form.images.length > 0 && (
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 8, marginBottom: 10 }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 8, marginBottom: 10, width: "100%" }}>
       {form.images.map((img, i) => (
-        <div key={i} style={{ position: "relative", aspectRatio: "1", borderRadius: 8, overflow: "hidden" }}>
-          <img src={img} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+        <div key={i} style={{ position: "relative", aspectRatio: "1", borderRadius: 8, overflow: "hidden", width: "100%" }}>
+  <img src={img} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
           <button
             onClick={() => setForm(f => ({
               ...f,
