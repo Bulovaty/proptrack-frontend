@@ -65,7 +65,7 @@ export default function Browse() {
   const [selected, setSelected] = useState(null);
   const [showInquiry, setShowInquiry] = useState(false);
   const [tenant, setTenant] = useState(null);
-  const [authMode, setAuthMode] = useState(null); // "login" | "register"
+  const [authMode, setAuthMode] = useState(null);
   const [authForm, setAuthForm] = useState({ full_name: "", email: "", phone: "", password: "" });
   const [authError, setAuthError] = useState("");
   const [authLoading, setAuthLoading] = useState(false);
@@ -74,14 +74,12 @@ export default function Browse() {
   const [inquirySuccess, setInquirySuccess] = useState(false);
   const [activeImage, setActiveImage] = useState(0);
 
-  // Load tenant from localStorage
   useEffect(() => {
     const token = getToken();
     const saved = localStorage.getItem("proptrack_tenant");
     if (token && saved) setTenant(JSON.parse(saved));
   }, []);
 
-  // Fetch listings
   useEffect(() => {
     fetchListings();
   }, [filters]);
@@ -156,10 +154,10 @@ export default function Browse() {
     }
   };
 
- const openListing = (listing) => {
-  setSelected(listing);
-  setActiveImage(0);
-};
+  const openListing = (listing) => {
+    setSelected(listing);
+    setActiveImage(0);
+  };
 
   const handleBookViewing = () => {
     if (!tenant) { setAuthMode("login"); }
@@ -178,24 +176,33 @@ export default function Browse() {
   return (
     <div style={{ minHeight: "100vh", background: "var(--bg-primary)", fontFamily: "var(--font-body)" }}>
 
-      {/* ── Top Nav ── */}
+      {/* Top Nav */}
       <nav style={{
         background: "var(--bg-secondary)", borderBottom: "1px solid var(--border)",
         padding: "0 24px", height: 56, display: "flex", alignItems: "center",
         justifyContent: "space-between", position: "sticky", top: 0, zIndex: 50,
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <div style={{
-            width: 32, height: 32, background: "var(--accent)", borderRadius: 8,
-            display: "flex", alignItems: "center", justifyContent: "center",
-            fontFamily: "var(--font-display)", fontWeight: 900, fontSize: 14, color: "#080c14"
-          }}>P</div>
-          <span style={{ fontFamily: "var(--font-display)", fontWeight: 900, fontSize: 16, color: "var(--text-primary)", letterSpacing: "-0.02em" }}>
-            PropTrack
-          </span>
-          <span style={{ fontSize: 11, color: "var(--accent)", background: "var(--accent-dim)", border: "1px solid var(--border-accent)", borderRadius: 20, padding: "2px 8px", fontWeight: 700 }}>
-            Browse
-          </span>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, cursor: "pointer" }} onClick={() => window.location.reload()}>
+            <div style={{
+              width: 32, height: 32, background: "var(--accent)", borderRadius: 8,
+              display: "flex", alignItems: "center", justifyContent: "center",
+              fontFamily: "var(--font-display)", fontWeight: 900, fontSize: 14, color: "#080c14"
+            }}>P</div>
+            <span style={{ fontFamily: "var(--font-display)", fontWeight: 900, fontSize: 16, color: "var(--text-primary)", letterSpacing: "-0.02em" }}>
+              PropTrack
+            </span>
+            <span style={{ fontSize: 11, color: "var(--accent)", background: "var(--accent-dim)", border: "1px solid var(--border-accent)", borderRadius: 20, padding: "2px 8px", fontWeight: 700 }}>
+              Browse
+            </span>
+          </div>
+          <button
+            onClick={() => window.location.reload()}
+            className="btn btn-ghost"
+            style={{ fontSize: 11, padding: "5px 12px", color: "var(--text-muted)" }}
+          >
+            ✕ Exit
+          </button>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           {tenant ? (
@@ -212,7 +219,7 @@ export default function Browse() {
         </div>
       </nav>
 
-      {/* ── Hero ── */}
+      {/* Hero */}
       <div style={{
         background: "linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-elevated) 100%)",
         borderBottom: "1px solid var(--border)", padding: "40px 24px 32px", textAlign: "center"
@@ -224,7 +231,6 @@ export default function Browse() {
           Browse verified listings from trusted agents across Kenya
         </p>
 
-        {/* Search + Filter Bar */}
         <div style={{ display: "flex", gap: 10, maxWidth: 600, margin: "0 auto", flexWrap: "wrap" }}>
           <div className="search-bar" style={{ flex: 1, minWidth: 200 }}>
             <IconSearch />
@@ -242,7 +248,6 @@ export default function Browse() {
           </button>
         </div>
 
-        {/* Filter Panel */}
         {showFilters && (
           <div style={{
             maxWidth: 600, margin: "12px auto 0", background: "var(--bg-card)",
@@ -277,7 +282,7 @@ export default function Browse() {
         )}
       </div>
 
-      {/* ── Listings Grid ── */}
+      {/* Listings Grid */}
       <div style={{ maxWidth: 1100, margin: "0 auto", padding: "28px 20px" }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 18 }}>
           <span style={{ fontSize: 13, color: "var(--text-secondary)" }}>
@@ -312,21 +317,22 @@ export default function Browse() {
             {filtered.map(listing => (
               <div key={listing.id} className="card" style={{ cursor: "pointer", padding: 0, overflow: "hidden" }}
                 onClick={() => openListing(listing)}>
-                {/* Image placeholder */}
+
+                {/* Image */}
                 <div style={{
                   height: 180,
                   background: (listing.images?.[0] || listing.image_url)
-  ? `url(${listing.images?.[0] || listing.image_url}) center/cover no-repeat`
-  : "linear-gradient(135deg, var(--bg-elevated), var(--bg-hover))",
+                    ? `url(${listing.images?.[0] || listing.image_url}) center/cover no-repeat`
+                    : "linear-gradient(135deg, var(--bg-elevated), var(--bg-hover))",
                   display: "flex", alignItems: "center", justifyContent: "center",
-                  color: "var(--text-muted)", position: "relative"
+                  color: "var(--text-muted)", position: "relative",
+                  backgroundSize: "cover", backgroundPosition: "center"
                 }}>
-                  <IconHome />
+                  {!(listing.images?.[0] || listing.image_url) && <IconHome />}
                   <span style={{
                     position: "absolute", top: 10, right: 10,
                     background: "var(--accent)", color: "#080c14",
-                    fontSize: 11, fontWeight: 800, padding: "3px 10px",
-                    borderRadius: 20
+                    fontSize: 11, fontWeight: 800, padding: "3px 10px", borderRadius: 20
                   }}>Available</span>
                 </div>
 
@@ -341,13 +347,13 @@ export default function Browse() {
                     </div>
                   )}
 
-                  {	listing.beds && (
+                  {listing.beds && (
                     <div style={{ display: "flex", alignItems: "center", gap: 5, color: "var(--text-secondary)", fontSize: 12, marginBottom: 10 }}>
-                      <IconBed /> {	listing.beds} Bedroom{	listing.beds > 1 ? "s" : ""}
+                      <IconBed /> {listing.beds} Bedroom{listing.beds > 1 ? "s" : ""}
                     </div>
                   )}
 
-                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
                     <span style={{ fontFamily: "var(--font-display)", fontSize: 16, fontWeight: 900, color: "var(--accent)" }}>
                       {formatPrice(listing.rent)}
                     </span>
@@ -355,8 +361,42 @@ export default function Browse() {
                   </div>
 
                   {listing.agent_name && (
-                    <div style={{ marginTop: 10, paddingTop: 10, borderTop: "1px solid var(--border)", fontSize: 11, color: "var(--text-muted)", display: "flex", alignItems: "center", gap: 5 }}>
+                    <div style={{ paddingTop: 10, borderTop: "1px solid var(--border)", fontSize: 11, color: "var(--text-muted)", display: "flex", alignItems: "center", gap: 5, marginBottom: 10 }}>
                       <IconUser /> {listing.agent_name}
+                    </div>
+                  )}
+
+                  {/* WhatsApp + Call buttons */}
+                  {(listing.agent_phone || listing.contact) && (
+                    <div style={{ display: "flex", gap: 8 }}>
+                      <a
+                        href={`https://wa.me/254${(listing.agent_phone || listing.contact)?.replace(/^0/, "")}?text=Hi, I'm interested in your listing: ${listing.title}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={e => e.stopPropagation()}
+                        style={{
+                          flex: 1, display: "flex", alignItems: "center", justifyContent: "center",
+                          gap: 5, fontSize: 11, fontWeight: 700, padding: "7px 10px",
+                          borderRadius: "var(--radius-sm)", textDecoration: "none",
+                          background: "rgba(37,211,102,0.08)", color: "#25D366",
+                          border: "1px solid rgba(37,211,102,0.2)"
+                        }}
+                      >
+                        <IconWhatsApp /> WhatsApp
+                      </a>
+                      <a
+                        href={`tel:${listing.agent_phone || listing.contact}`}
+                        onClick={e => e.stopPropagation()}
+                        style={{
+                          flex: 1, display: "flex", alignItems: "center", justifyContent: "center",
+                          gap: 5, fontSize: 11, fontWeight: 700, padding: "7px 10px",
+                          borderRadius: "var(--radius-sm)", textDecoration: "none",
+                          background: "var(--bg-secondary)", color: "var(--text-secondary)",
+                          border: "1px solid var(--border)"
+                        }}
+                      >
+                        <IconPhone /> Call
+                      </a>
                     </div>
                   )}
                 </div>
@@ -366,7 +406,7 @@ export default function Browse() {
         )}
       </div>
 
-      {/* ── Listing Detail Modal ── */}
+      {/* Listing Detail Modal */}
       {selected && !showInquiry && !authMode && (
         <div className="modal-overlay" onClick={() => setSelected(null)}>
           <div className="modal" style={{ maxWidth: 560 }} onClick={e => e.stopPropagation()}>
@@ -378,48 +418,49 @@ export default function Browse() {
                 <IconX />
               </button>
             </div>
-{/* Image Gallery */}
-{(selected.images?.length > 0 || selected.image_url) ? (
-  <div style={{ marginBottom: 18 }}>
-    <div style={{
-      height: 200, borderRadius: "var(--radius-sm)", overflow: "hidden",
-      background: `url(${selected.images?.[activeImage] || selected.image_url}) center/cover no-repeat`
-    }} />
-    {selected.images?.length > 1 && (
-      <div style={{ display: "flex", gap: 6, marginTop: 8, overflowX: "auto" }}>
-        {selected.images.map((img, i) => (
-          <div key={i} onClick={() => setActiveImage(i)} style={{
-            width: 52, height: 52, borderRadius: 8, flexShrink: 0, cursor: "pointer",
-            background: `url(${img}) center/cover no-repeat`,
-            border: activeImage === i ? "2px solid var(--accent)" : "2px solid transparent",
-            opacity: activeImage === i ? 1 : 0.6, transition: "all 0.15s"
-          }} />
-        ))}
-      </div>
-    )}
-  </div>
-) : (
-  <div style={{
-    height: 200, background: "linear-gradient(135deg, var(--bg-elevated), var(--bg-hover))",
-    borderRadius: "var(--radius-sm)", display: "flex", alignItems: "center",
-    justifyContent: "center", color: "var(--text-muted)", marginBottom: 18
-  }}>
-    <IconHome />
-  </div>
-)}
+
+            {/* Image Gallery */}
+            {(selected.images?.length > 0 || selected.image_url) ? (
+              <div style={{ marginBottom: 18 }}>
+                <div style={{
+                  height: 200, borderRadius: "var(--radius-sm)", overflow: "hidden",
+                  background: `url(${selected.images?.[activeImage] || selected.image_url}) center/cover no-repeat`
+                }} />
+                {selected.images?.length > 1 && (
+                  <div style={{ display: "flex", gap: 6, marginTop: 8, overflowX: "auto" }}>
+                    {selected.images.map((img, i) => (
+                      <div key={i} onClick={() => setActiveImage(i)} style={{
+                        width: 52, height: 52, borderRadius: 8, flexShrink: 0, cursor: "pointer",
+                        background: `url(${img}) center/cover no-repeat`,
+                        border: activeImage === i ? "2px solid var(--accent)" : "2px solid transparent",
+                        opacity: activeImage === i ? 1 : 0.6, transition: "all 0.15s"
+                      }} />
+                    ))}
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div style={{
+                height: 200, background: "linear-gradient(135deg, var(--bg-elevated), var(--bg-hover))",
+                borderRadius: "var(--radius-sm)", display: "flex", alignItems: "center",
+                justifyContent: "center", color: "var(--text-muted)", marginBottom: 18
+              }}>
+                <IconHome />
+              </div>
+            )}
 
             {/* Details Grid */}
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 18 }}>
               <div style={{ background: "var(--bg-secondary)", borderRadius: "var(--radius-sm)", padding: "12px 14px" }}>
                 <div style={{ fontSize: 10, color: "var(--text-muted)", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: 4 }}>Rent</div>
-                <div style={{ fontFamily: "var(--font-display)", fontSize: 20, fontWeight: 900, color: "var(--accent)" }}>{formatPrice(	selected.rent)}</div>
+                <div style={{ fontFamily: "var(--font-display)", fontSize: 20, fontWeight: 900, color: "var(--accent)" }}>{formatPrice(selected.rent)}</div>
                 <div style={{ fontSize: 11, color: "var(--text-muted)" }}>per month</div>
               </div>
-              {	selected.beds && (
+              {selected.beds && (
                 <div style={{ background: "var(--bg-secondary)", borderRadius: "var(--radius-sm)", padding: "12px 14px" }}>
                   <div style={{ fontSize: 10, color: "var(--text-muted)", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: 4 }}>Bedrooms</div>
-                  <div style={{ fontFamily: "var(--font-display)", fontSize: 20, fontWeight: 900, color: "var(--text-primary)" }}>{	selected.beds}</div>
-                  <div style={{ fontSize: 11, color: "var(--text-muted)" }}>bedroom{	selected.beds > 1 ? "s" : ""}</div>
+                  <div style={{ fontFamily: "var(--font-display)", fontSize: 20, fontWeight: 900, color: "var(--text-primary)" }}>{selected.beds}</div>
+                  <div style={{ fontSize: 11, color: "var(--text-muted)" }}>bedroom{selected.beds > 1 ? "s" : ""}</div>
                 </div>
               )}
             </div>
@@ -441,18 +482,18 @@ export default function Browse() {
               <div style={{ background: "var(--bg-secondary)", border: "1px solid var(--border)", borderRadius: "var(--radius-sm)", padding: "12px 14px", marginBottom: 18 }}>
                 <div style={{ fontSize: 10, color: "var(--text-muted)", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: 8 }}>Listed by</div>
                 <div style={{ fontSize: 13, fontWeight: 700, color: "var(--text-primary)", marginBottom: 6 }}>{selected.agent_name}</div>
-                {selected.agent_phone && (
-                  <a href={`tel:${selected.agent_phone}`} style={{ display: "inline-flex", alignItems: "center", gap: 5, fontSize: 12, color: "var(--accent-2)", textDecoration: "none" }}>
-                    <IconPhone /> {selected.agent_phone}
+                {(selected.agent_phone || selected.contact) && (
+                  <a href={`tel:${selected.agent_phone || selected.contact}`} style={{ display: "inline-flex", alignItems: "center", gap: 5, fontSize: 12, color: "var(--accent-2)", textDecoration: "none" }}>
+                    <IconPhone /> {selected.agent_phone || selected.contact}
                   </a>
                 )}
               </div>
             )}
 
             <div className="modal-actions">
-              {selected.agent_phone && (
+              {(selected.agent_phone || selected.contact) && (
                 <a
-                  href={`https://wa.me/254${selected.agent_phone?.replace(/^0/, "")}?text=Hi, I'm interested in your listing: ${selected.title || selected.name}`}
+                  href={`https://wa.me/254${(selected.agent_phone || selected.contact)?.replace(/^0/, "")}?text=Hi, I'm interested in your listing: ${selected.title || selected.name}`}
                   target="_blank" rel="noopener noreferrer"
                   className="btn btn-ghost"
                   style={{ color: "#25D366", borderColor: "rgba(37,211,102,0.3)", textDecoration: "none" }}
@@ -468,7 +509,7 @@ export default function Browse() {
         </div>
       )}
 
-      {/* ── Auth Modal ── */}
+      {/* Auth Modal */}
       {authMode && (
         <div className="modal-overlay" onClick={() => setAuthMode(null)}>
           <div className="modal" style={{ maxWidth: 420 }} onClick={e => e.stopPropagation()}>
@@ -530,7 +571,7 @@ export default function Browse() {
         </div>
       )}
 
-      {/* ── Inquiry / Book Viewing Modal ── */}
+      {/* Inquiry / Book Viewing Modal */}
       {showInquiry && selected && (
         <div className="modal-overlay" onClick={() => setShowInquiry(false)}>
           <div className="modal" style={{ maxWidth: 420 }} onClick={e => e.stopPropagation()}>
@@ -548,7 +589,7 @@ export default function Browse() {
             ) : (
               <>
                 <div style={{ background: "var(--bg-secondary)", borderRadius: "var(--radius-sm)", padding: "10px 14px", marginBottom: 18, fontSize: 12, color: "var(--text-secondary)" }}>
-                  <strong style={{ color: "var(--text-primary)" }}>{selected.title || selected.name}</strong> — {formatPrice(	selected.rent)}/mo
+                  <strong style={{ color: "var(--text-primary)" }}>{selected.title || selected.name}</strong> — {formatPrice(selected.rent)}/mo
                 </div>
                 <form onSubmit={handleInquiry} style={{ display: "flex", flexDirection: "column", gap: 14 }}>
                   <div className="form-group">
