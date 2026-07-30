@@ -97,7 +97,7 @@ export default function Landing({ onGetStarted, onLogin }) {
       <nav className="landing-nav">
         <div className="nav-inner">
           <div className="nav-logo">
-            <LogoFull height={36} />
+            <LogoMark height={36} />
           </div>
 
           <div className={`nav-links ${menuOpen ? "open" : ""}`}>
@@ -285,7 +285,7 @@ export default function Landing({ onGetStarted, onLogin }) {
         <div className="footer-inner">
           <div className="footer-brand">
             <div className="nav-logo" style={{ marginBottom: 8 }}>
-              <LogoFull height={32} />
+              <LogoMark height={32} />
             </div>
             <p className="footer-tagline">Property management built for Kenya.</p>
           </div>
