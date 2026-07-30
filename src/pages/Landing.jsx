@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useMode } from "../context/ModeContext";
-import { LogoFull } from "../components/Logo";
+import { LogoFull, LogoMark } from "../components/Logo";
 import {
   IconSun, IconMoon, IconMenu, IconX, IconCheck,
   IconCreditCard, IconBuilding, IconUsers, IconBell,
@@ -97,7 +97,7 @@ export default function Landing({ onGetStarted, onLogin }) {
       <nav className="landing-nav">
         <div className="nav-inner">
           <div className="nav-logo">
-            <LogoFull height={28} />
+            <LogoFull height={36} />
           </div>
 
           <div className={`nav-links ${menuOpen ? "open" : ""}`}>
@@ -178,33 +178,7 @@ export default function Landing({ onGetStarted, onLogin }) {
           </div>
         </div>
       </section>
-{/* Listings Highlight */}
-<section className="section">
-  <div className="section-inner">
-    <div className="section-badge">Tenant Portal</div>
-    <h2 className="section-title-lg">Fill vacancies faster.<br />Tenants find you online.</h2>
-    <p className="section-sub">Your listings appear on a public browse page at proptrack.co.ke — tenants can search, filter, view photos, contact you on WhatsApp, and book a viewing. All without a single phone call.</p>
-    <div className="features-grid" style={{ marginTop: 32 }}>
-      {[
-        { Icon: IconHome, title: "Up to 10 Photos", desc: "Showcase every room. High-quality compressed images load fast on any connection." },
-        { Icon: IconSearch, title: "Search & Filter", desc: "Tenants filter by price, location, and bedrooms. Your listing reaches the right people." },
-        { Icon: IconBell, title: "Instant Inquiries", desc: "Tenants request viewings online. You get notified and manage all requests from your dashboard." },
-        { Icon: IconUsers, title: "WhatsApp & Call", desc: "Every listing shows your WhatsApp and phone number. One tap and tenants are talking to you." },
-      ].map(f => (
-        <div key={f.title} className="feature-card">
-          <div className="feature-icon-wrap"><f.Icon size={22} /></div>
-          <div className="feature-title">{f.title}</div>
-          <div className="feature-desc">{f.desc}</div>
-        </div>
-      ))}
-    </div>
-    <div style={{ textAlign: "center", marginTop: 32 }}>
-      <button className="btn btn-primary hero-btn" onClick={onGetStarted}>
-        Start Posting Listings <IconArrowRight size={16} />
-      </button>
-    </div>
-  </div>
-</section>
+
       {/* How It Works */}
       <section className="section section-alt">
         <div className="section-inner">
@@ -311,7 +285,7 @@ export default function Landing({ onGetStarted, onLogin }) {
         <div className="footer-inner">
           <div className="footer-brand">
             <div className="nav-logo" style={{ marginBottom: 8 }}>
-              <LogoFull height={22} />
+              <LogoFull height={32} />
             </div>
             <p className="footer-tagline">Property management built for Kenya.</p>
           </div>
