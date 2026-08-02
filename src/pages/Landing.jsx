@@ -165,8 +165,8 @@ export default function Landing({ onGetStarted, onLogin }) {
       <section className="section" id="features">
         <div className="section-inner">
           <div className="section-badge">Features</div>
-          <h2 className="section-title-lg">Everything agents need.<br />Nothing they don&apos;t.</h2>
-          <p className="section-sub">Built specifically for small and mid-size property agents in Kenya.</p>
+          <h2 className="section-title-lg">Everything Property Managers need.<br />Nothing they don&apos;t.</h2>
+          <p className="section-sub">Built specifically for small and mid-size property Managers in Kenya.</p>
           <div className="features-grid">
             {FEATURES.map(f => (
               <div key={f.title} className="feature-card">
