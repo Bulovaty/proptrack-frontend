@@ -66,7 +66,6 @@ const PLANS = [
     ],
   },
 ];
-
 const STEPS = [
   { num: "01", title: "Create your account", desc: "Sign up free. No credit card needed." },
   { num: "02", title: "Add your properties", desc: "Enter your properties and name each unit." },
